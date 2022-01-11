@@ -7,18 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import thierry.myweather.R
 
-class CitiesFragment : Fragment() {
+class SecondFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cities, container, false)
+        return inflater.inflate(R.layout.fragment_second, container, false)
     }
 
     companion object {
-        fun newInstance() = CitiesFragment()
+        fun newInstance() = SecondFragment()
     }
 
 }
