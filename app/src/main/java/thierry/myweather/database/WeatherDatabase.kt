@@ -31,6 +31,8 @@ abstract class WeatherDatabase : RoomDatabase() {
             applicationScope.launch {
 
                 dao.insertCity(City(name = "Paris"))
+                dao.insertCity(City(name = "Rennes"))
+                dao.insertCity(City(name = "Toulouse"))
 
             }
         }
