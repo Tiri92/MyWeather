@@ -135,29 +135,37 @@ class CitiesFragment : Fragment() {
                         (dialog as androidx.appcompat.app.AlertDialog).findViewById<TextInputEditText>(
                             R.id.edittext_add_city
                         )?.text.toString()
-                    viewModel.addCity(City(name = typedText))
-                    viewModel.cityIsSuccessfullyInserted()
-                        .observe(viewLifecycleOwner) { cityIsSuccessfullyInserted ->
-                            if (cityIsSuccessfullyInserted.toInt() == newIdCityTable) {
-                                Utils.displayCustomSnackbar(
-                                    requireView(),
-                                    getString(R.string.city_successfully_added),
-                                    ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.green
+                    if (typedText.trim().isEmpty()) {
+                        Utils.displayCustomSnackbar(
+                            requireView(),
+                            getString(R.string.field_cant_be_empty),
+                            ContextCompat.getColor(requireContext(), R.color.red)
+                        )
+                    } else {
+                        viewModel.addCity(City(name = typedText))
+                        viewModel.cityIsSuccessfullyInserted()
+                            .observe(viewLifecycleOwner) { cityIsSuccessfullyInserted ->
+                                if (cityIsSuccessfullyInserted.toInt() == newIdCityTable) {
+                                    Utils.displayCustomSnackbar(
+                                        requireView(),
+                                        getString(R.string.city_successfully_added),
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.green
+                                        )
                                     )
-                                )
-                            } else {
-                                Utils.displayCustomSnackbar(
-                                    requireView(),
-                                    getString(R.string.error_city_not_added),
-                                    ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.red
+                                } else {
+                                    Utils.displayCustomSnackbar(
+                                        requireView(),
+                                        getString(R.string.error_city_not_added),
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.red
+                                        )
                                     )
-                                )
+                                }
                             }
-                        }
+                    }
                 }
                 .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
                 }

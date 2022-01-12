@@ -21,7 +21,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="16dp"
+        app:helperText="@string/characters_maximum"
         app:helperTextEnabled="true"
+        app:helperTextTextColor="@color/red"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dialog_title">
 
@@ -30,8 +32,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/name_of_the_city"
-            android:inputType="textMultiLine"
-            android:singleLine="false" />
+            android:inputType="text"
+            android:maxLength="20"
+            android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

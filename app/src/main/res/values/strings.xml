@@ -13,4 +13,6 @@
     <string name="city_successfully_added">City successfully added</string>
     <string name="error_city_not_added">Error, city not added</string>
     <string name="add_new_city">Add a new city</string>
+    <string name="characters_maximum">20 characters maximum</string>
+    <string name="field_cant_be_empty">Field can\'t be empty</string>
 </resources>
