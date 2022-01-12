@@ -9,8 +9,6 @@ import javax.inject.Singleton
 class WeatherDatabaseRepository @Inject constructor(private val weatherDao: WeatherDao) {
     fun getCities() = weatherDao.getCities()
 
-    fun getNewIdCityTable() = weatherDao.getNewIdCityTable()
-
     suspend fun addCity(city: City): Long = weatherDao.insertCity(city)
 
     suspend fun deleteCity(city: City): Int = weatherDao.deleteCity(city)

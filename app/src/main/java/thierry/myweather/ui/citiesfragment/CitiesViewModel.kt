@@ -13,8 +13,6 @@ class CitiesViewModel @Inject constructor(private val weatherDatabaseRepository:
 
     fun getCities() = weatherDatabaseRepository.getCities().asLiveData()
 
-    val getNewIdCityTable = weatherDatabaseRepository.getNewIdCityTable().asLiveData()
-
     fun addCity(city: City) = viewModelScope.launch {
         cityIsSuccessfullyInserted.value = weatherDatabaseRepository.addCity(city)
     }

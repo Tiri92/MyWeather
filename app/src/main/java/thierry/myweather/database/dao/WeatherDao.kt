@@ -9,9 +9,6 @@ interface WeatherDao {
     @Query("SELECT * FROM city_table")
     fun getCities(): Flow<List<City>>
 
-    @Query("SELECT MAX(id) + 1 FROM city_table")
-    fun getNewIdCityTable(): Flow<Int>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCity(city: City): Long
 

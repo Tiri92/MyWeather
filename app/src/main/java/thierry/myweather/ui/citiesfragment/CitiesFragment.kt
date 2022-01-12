@@ -21,7 +21,6 @@ import thierry.myweather.databinding.FragmentCitiesBinding
 import thierry.myweather.model.City
 import thierry.myweather.utils.Utils
 
-
 @AndroidEntryPoint
 class CitiesFragment : Fragment() {
 
@@ -36,7 +35,7 @@ class CitiesFragment : Fragment() {
         val binding = FragmentCitiesBinding.inflate(layoutInflater)
         val rootView = binding.root
 
-        viewModel.getCities().observe(this) { citiesList ->
+        viewModel.getCities().observe(viewLifecycleOwner) { citiesList ->
             if (citiesList != null) {
                 recyclerView = binding.recyclerviewCities
                 setUpRecyclerView(recyclerView!!, citiesList)
@@ -64,7 +63,7 @@ class CitiesFragment : Fragment() {
                             viewModel.deleteCity(City(id = idOfCityToDelete))
                         }
                         if (direction == 4) {
-//                            childFragmentManager.beginTransaction().replace(
+//                            requireActivity().supportFragmentManager.beginTransaction().replace(
 //                                R.id.fragment_container_view,
 //                                CityDetailFragment.newInstance()
 //                            ).commit()
@@ -144,26 +143,15 @@ class CitiesFragment : Fragment() {
                     } else {
                         viewModel.addCity(City(name = typedText))
                         viewModel.cityIsSuccessfullyInserted()
-                            .observe(viewLifecycleOwner) { cityIsSuccessfullyInserted ->
-                                if (cityIsSuccessfullyInserted.toInt() == newIdCityTable) {
-                                    Utils.displayCustomSnackbar(
-                                        requireView(),
-                                        getString(R.string.city_successfully_added),
-                                        ContextCompat.getColor(
-                                            requireContext(),
-                                            R.color.green
-                                        )
+                            .observe(viewLifecycleOwner) {
+                                Utils.displayCustomSnackbar(
+                                    requireView(),
+                                    getString(R.string.city_successfully_added),
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.green
                                     )
-                                } else {
-                                    Utils.displayCustomSnackbar(
-                                        requireView(),
-                                        getString(R.string.error_city_not_added),
-                                        ContextCompat.getColor(
-                                            requireContext(),
-                                            R.color.red
-                                        )
-                                    )
-                                }
+                                )
                             }
                     }
                 }
