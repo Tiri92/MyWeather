@@ -25,7 +25,6 @@ import thierry.myweather.utils.Utils
 class CitiesFragment : Fragment() {
 
     private val viewModel: CitiesViewModel by viewModels()
-    private var newIdCityTable: Int? = null
     private var recyclerView: RecyclerView? = null
 
     override fun onCreateView(
