@@ -121,10 +121,6 @@ class CitiesFragment : Fragment() {
             }
         }
 
-        viewModel.getNewIdCityTable.observe(viewLifecycleOwner) { newIdCityTable ->
-            this.newIdCityTable = newIdCityTable
-        }
-
         binding.addCityButton.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setView(R.layout.dialog_add_city)
