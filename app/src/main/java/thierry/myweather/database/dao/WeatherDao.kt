@@ -1,9 +1,6 @@
 package thierry.myweather.database.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 import thierry.myweather.model.City
 
@@ -17,4 +14,7 @@ interface WeatherDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCity(city: City): Long
+
+    @Delete
+    suspend fun deleteCity(city: City): Int
 }

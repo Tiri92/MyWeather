@@ -24,4 +24,8 @@ class CitiesViewModel @Inject constructor(private val weatherDatabaseRepository:
         return cityIsSuccessfullyInserted
     }
 
+    fun deleteCity(city: City) = viewModelScope.launch {
+        weatherDatabaseRepository.deleteCity(city)
+    }
+
 }
