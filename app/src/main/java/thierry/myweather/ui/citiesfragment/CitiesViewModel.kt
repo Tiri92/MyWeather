@@ -17,6 +17,10 @@ class CitiesViewModel @Inject constructor(private val weatherDatabaseRepository:
         cityIsSuccessfullyInserted.value = weatherDatabaseRepository.addCity(city)
     }
 
+    fun updateCity(city: City) = viewModelScope.launch {
+        weatherDatabaseRepository.updateCity(city)
+    }
+
     private var cityIsSuccessfullyInserted = MutableLiveData<Long>()
     fun cityIsSuccessfullyInserted(): LiveData<Long> {
         return cityIsSuccessfullyInserted

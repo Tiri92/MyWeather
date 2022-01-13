@@ -12,6 +12,9 @@ interface WeatherDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCity(city: City): Long
 
+    @Update
+    suspend fun updateCity(city: City)
+
     @Delete
     suspend fun deleteCity(city: City): Int
 }

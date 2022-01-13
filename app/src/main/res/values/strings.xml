@@ -14,4 +14,5 @@
     <string name="add_new_city">Add a new city</string>
     <string name="characters_maximum">20 characters maximum</string>
     <string name="field_cant_be_empty">Field can\'t be empty</string>
+    <string name="city_successfully_deleted">City successfully deleted</string>
 </resources>

@@ -23,6 +23,7 @@ import thierry.myweather.databinding.FragmentCitiesBinding
 import thierry.myweather.model.City
 import thierry.myweather.ui.cityDetailFragment.CityDetailFragment
 import thierry.myweather.utils.Utils
+import java.util.*
 
 @AndroidEntryPoint
 class CitiesFragment : Fragment() {
@@ -44,11 +45,11 @@ class CitiesFragment : Fragment() {
         viewModel.getCities().observe(viewLifecycleOwner) { citiesList ->
             if (citiesList != null) {
                 recyclerView = binding.recyclerviewCities
-                setUpRecyclerView(recyclerView!!, citiesList)
+                setUpRecyclerView(recyclerView!!, citiesList.sortedBy { city -> city.position })
 
                 val simpleCallback = object :
                     ItemTouchHelper.SimpleCallback(
-                        ItemTouchHelper.START or ItemTouchHelper.END,
+                        ItemTouchHelper.UP or ItemTouchHelper.DOWN,
                         ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT
                     ) {
 
@@ -58,7 +59,44 @@ class CitiesFragment : Fragment() {
                         target: RecyclerView.ViewHolder,
                     ): Boolean {
 
+                        val adapterSortedCitiesList =
+                            (binding.recyclerviewCities.adapter as CitiesAdapter).cities
+
+                        val fromPosition = viewHolder.adapterPosition
+                        val toPosition = target.adapterPosition
+
+                        Collections.swap(adapterSortedCitiesList, fromPosition, toPosition)
+                        recyclerView.adapter?.notifyItemMoved(fromPosition, toPosition)
+
+                        adapterSortedCitiesList.forEachIndexed { index, city ->
+                            city.position = index
+                            viewModel.updateCity(city)
+                        }
+
                         return true
+                    }
+
+                    override fun onSelectedChanged(
+                        viewHolder: RecyclerView.ViewHolder?,
+                        actionState: Int,
+                    ) {
+                        super.onSelectedChanged(viewHolder, actionState)
+                        if (actionState == 2) {
+                            viewHolder?.itemView?.setBackgroundColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.background
+                                )
+                            )
+                        }
+                    }
+
+                    override fun clearView(
+                        recyclerView: RecyclerView,
+                        viewHolder: RecyclerView.ViewHolder,
+                    ) {
+                        super.clearView(recyclerView, viewHolder)
+                        viewHolder.itemView.setBackgroundColor(0)
                     }
 
                     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -67,6 +105,11 @@ class CitiesFragment : Fragment() {
                                 R.id.city_name
                             ).tag.toString().toInt()
                             viewModel.deleteCity(City(id = idOfCityToDelete))
+                            Utils.displayCustomSnackbar(
+                                requireView(),
+                                getString(R.string.city_successfully_deleted),
+                                ContextCompat.getColor(requireContext(), R.color.red)
+                            )
                         }
                         if (direction == 4) {
                             parentFragmentManager.beginTransaction().replace(

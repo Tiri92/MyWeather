@@ -11,5 +11,7 @@ class WeatherDatabaseRepository @Inject constructor(private val weatherDao: Weat
 
     suspend fun addCity(city: City): Long = weatherDao.insertCity(city)
 
+    suspend fun updateCity(city: City) = weatherDao.updateCity(city)
+
     suspend fun deleteCity(city: City): Int = weatherDao.deleteCity(city)
 }

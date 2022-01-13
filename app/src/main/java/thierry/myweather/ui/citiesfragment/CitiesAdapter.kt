@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import thierry.myweather.databinding.ItemCityBinding
 import thierry.myweather.model.City
 
-class CitiesAdapter(private val cities: List<City>) :
+class CitiesAdapter(val cities: List<City>) :
     RecyclerView.Adapter<CitiesAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
