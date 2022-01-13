@@ -104,7 +104,7 @@ class CitiesFragment : Fragment() {
                             .addSwipeLeftBackgroundColor(
                                 ContextCompat.getColor(
                                     requireContext(),
-                                    R.color.green
+                                    R.color.cyan_200
                                 )
                             )
                             .addSwipeLeftActionIcon(R.drawable.ic_baseline_cloud_24)
