@@ -47,6 +47,9 @@ class CitiesFragment : Fragment() {
                 recyclerView = binding.recyclerviewCities
                 setUpRecyclerView(recyclerView!!, citiesList.sortedBy { city -> city.position })
 
+                val adapterSortedCitiesList =
+                    (binding.recyclerviewCities.adapter as CitiesAdapter).cities
+
                 val simpleCallback = object :
                     ItemTouchHelper.SimpleCallback(
                         ItemTouchHelper.UP or ItemTouchHelper.DOWN,
@@ -59,19 +62,11 @@ class CitiesFragment : Fragment() {
                         target: RecyclerView.ViewHolder,
                     ): Boolean {
 
-                        val adapterSortedCitiesList =
-                            (binding.recyclerviewCities.adapter as CitiesAdapter).cities
-
                         val fromPosition = viewHolder.adapterPosition
                         val toPosition = target.adapterPosition
 
                         Collections.swap(adapterSortedCitiesList, fromPosition, toPosition)
                         recyclerView.adapter?.notifyItemMoved(fromPosition, toPosition)
-
-                        adapterSortedCitiesList.forEachIndexed { index, city ->
-                            city.position = index
-                            viewModel.updateCity(city)
-                        }
 
                         return true
                     }
@@ -97,6 +92,11 @@ class CitiesFragment : Fragment() {
                     ) {
                         super.clearView(recyclerView, viewHolder)
                         viewHolder.itemView.setBackgroundColor(0)
+                        adapterSortedCitiesList.forEachIndexed { index, city ->
+                            city.position = index
+                            viewModel.updateCity(city)
+                        }
+                        refreshFragment()
                     }
 
                     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -198,6 +198,7 @@ class CitiesFragment : Fragment() {
                                     )
                                 )
                             }
+                        refreshFragment()
                     }
                 }
                 .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
@@ -216,6 +217,13 @@ class CitiesFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = myLayoutManager
         recyclerView.adapter = CitiesAdapter(citiesList)
+    }
+
+    fun refreshFragment() {
+        parentFragmentManager.beginTransaction().detach(this@CitiesFragment)
+            .commit()
+        parentFragmentManager.beginTransaction().attach(this@CitiesFragment)
+            .commit()
     }
 
     companion object {
