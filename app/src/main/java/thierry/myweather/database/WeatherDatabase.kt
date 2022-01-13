@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import thierry.myweather.ApplicationScope
+import thierry.myweather.di.ApplicationScope
 import thierry.myweather.model.City
 import thierry.myweather.database.dao.WeatherDao
 import javax.inject.Inject

@@ -7,11 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,6 +21,7 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import thierry.myweather.R
 import thierry.myweather.databinding.FragmentCitiesBinding
 import thierry.myweather.model.City
+import thierry.myweather.ui.cityDetailFragment.CityDetailFragment
 import thierry.myweather.utils.Utils
 
 @AndroidEntryPoint
@@ -33,6 +36,10 @@ class CitiesFragment : Fragment() {
     ): View {
         val binding = FragmentCitiesBinding.inflate(layoutInflater)
         val rootView = binding.root
+
+        val bottomNav =
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNav.isVisible = true
 
         viewModel.getCities().observe(viewLifecycleOwner) { citiesList ->
             if (citiesList != null) {
@@ -62,10 +69,10 @@ class CitiesFragment : Fragment() {
                             viewModel.deleteCity(City(id = idOfCityToDelete))
                         }
                         if (direction == 4) {
-//                            requireActivity().supportFragmentManager.beginTransaction().replace(
-//                                R.id.fragment_container_view,
-//                                CityDetailFragment.newInstance()
-//                            ).commit()
+                            parentFragmentManager.beginTransaction().replace(
+                                R.id.fragment_container_view,
+                                CityDetailFragment.newInstance()
+                            ).addToBackStack("CityDetailFragment").commit()
                         }
                     }
 
@@ -100,7 +107,7 @@ class CitiesFragment : Fragment() {
                                     R.color.green
                                 )
                             )
-                            .addSwipeLeftActionIcon(R.drawable.ic_launcher_background)
+                            .addSwipeLeftActionIcon(R.drawable.ic_baseline_cloud_24)
                             .create()
                             .decorate()
                         super.onChildDraw(
