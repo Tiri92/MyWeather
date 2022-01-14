@@ -4,9 +4,9 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/city_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"
         android:textStyle="bold" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

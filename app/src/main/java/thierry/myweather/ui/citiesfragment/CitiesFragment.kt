@@ -114,7 +114,11 @@ class CitiesFragment : Fragment() {
                         if (direction == 4) {
                             parentFragmentManager.beginTransaction().replace(
                                 R.id.fragment_container_view,
-                                CityDetailFragment.newInstance()
+                                CityDetailFragment.newInstance(
+                                    viewHolder.itemView.findViewById<TextView>(
+                                        R.id.city_name
+                                    ).text.toString()
+                                )
                             ).addToBackStack("CityDetailFragment").commit()
                         }
                     }

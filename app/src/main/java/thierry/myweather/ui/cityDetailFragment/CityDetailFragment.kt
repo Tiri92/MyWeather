@@ -13,10 +13,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import thierry.myweather.R
 import thierry.myweather.databinding.FragmentCityDetailBinding
 
+private const val ARG_PARAM_CITY_NAME = "city name"
+
 @AndroidEntryPoint
 class CityDetailFragment : Fragment() {
 
     private val viewModel: CityDetailViewModel by viewModels()
+    private var cityName: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,16 +32,32 @@ class CityDetailFragment : Fragment() {
             requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNav.isVisible = false
 
-        viewModel.callOpenWeatherMap("Paris", "fr")
+        arguments.let {
+            cityName = it?.getString(ARG_PARAM_CITY_NAME)
+            if (cityName != null) {
+                viewModel.callOpenWeatherMap(cityName.toString(), "fr")
+            }
+        }
+
         viewModel.getOpenWeatherResponse().observe(viewLifecycleOwner) { openWeatherResponse ->
-            Log.i("THIERRYBITAR", "${openWeatherResponse.main?.temp} à ${openWeatherResponse.name}")
+            binding.cityName.text = openWeatherResponse.name
+            Log.i(
+                "THIERRYBITAR",
+                "${openWeatherResponse.main?.temp} à ${openWeatherResponse.name}"
+            )
         }
 
         return rootView
     }
 
     companion object {
-        fun newInstance() = CityDetailFragment()
+        fun newInstance(cityName: String) = CityDetailFragment().apply {
+            arguments = Bundle().apply {
+                putString(
+                    ARG_PARAM_CITY_NAME, cityName
+                )
+            }
+        }
     }
 
 }
