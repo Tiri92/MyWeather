@@ -19,4 +19,8 @@ class CityDetailViewModel @Inject constructor(private val openWeatherMapReposito
         return openWeatherMapRepository.getOpenWeatherResponse()
     }
 
+    fun getIsFailure(): LiveData<Boolean> {
+        return openWeatherMapRepository.getIsFailure()
+    }
+
 }

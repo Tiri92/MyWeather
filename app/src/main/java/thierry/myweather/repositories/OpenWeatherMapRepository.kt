@@ -15,9 +15,14 @@ import javax.inject.Singleton
 class OpenWeatherMapRepository @Inject constructor(private val openWeatherMapService: OpenWeatherMapService) {
 
     private var openWeatherResponse = MutableLiveData<OpenWeatherResponse>()
+    private var isFailure = MutableLiveData<Boolean>()
 
     fun getOpenWeatherResponse(): LiveData<OpenWeatherResponse> {
         return openWeatherResponse
+    }
+
+    fun getIsFailure(): LiveData<Boolean> {
+        return isFailure
     }
 
     fun callOpenWeatherMap(cityName: String, countryName: String) {
@@ -30,10 +35,12 @@ class OpenWeatherMapRepository @Inject constructor(private val openWeatherMapSer
                 ) {
                     if (response.isSuccessful) {
                         openWeatherResponse.value = response.body()
+                        isFailure.value = false
                     }
                 }
 
                 override fun onFailure(call: Call<OpenWeatherResponse>, t: Throwable) {
+                    isFailure.value = true
                     Log.i("THIERRYBITAR", "FAIL")
                 }
             })
