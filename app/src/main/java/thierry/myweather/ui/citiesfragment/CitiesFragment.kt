@@ -193,6 +193,7 @@ class CitiesFragment : Fragment() {
                         viewModel.addCity(City(name = typedText))
                         viewModel.cityIsSuccessfullyInserted()
                             .observe(viewLifecycleOwner) {
+                                refreshFragment()
                                 Utils.displayCustomSnackbar(
                                     requireView(),
                                     getString(R.string.city_successfully_added),
@@ -202,7 +203,6 @@ class CitiesFragment : Fragment() {
                                     )
                                 )
                             }
-                        refreshFragment()
                     }
                 }
                 .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
