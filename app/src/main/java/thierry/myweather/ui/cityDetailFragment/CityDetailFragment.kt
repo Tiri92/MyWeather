@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
@@ -21,6 +22,7 @@ class CityDetailFragment : Fragment() {
 
     private val viewModel: CityDetailViewModel by viewModels()
     private var cityName: String? = null
+    private var isFailure: Boolean? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,13 +57,28 @@ class CityDetailFragment : Fragment() {
 
         viewModel.getIsFailure().observe(viewLifecycleOwner) { isFailure ->
             if (!isFailure) {
+                this.isFailure = isFailure
                 binding.progressIndicator.hide()
                 binding.weatherImageview.isVisible = true
             } else {
+                this.isFailure = isFailure
                 binding.progressIndicator.show()
                 binding.cityName.text = ""
                 binding.weatherImageviewDescription.text = ""
                 binding.weatherImageview.isVisible = false
+            }
+        }
+
+        viewModel.getCurrentConnectionState().observe(viewLifecycleOwner) { isConnected ->
+            if (isConnected && isFailure == true) {
+                viewModel.callOpenWeatherMap(cityName.toString(), "fr")
+                Toast.makeText(requireContext(), "Internet working again", Toast.LENGTH_LONG).show()
+            } else if (isConnected) {
+                binding.progressIndicator.hide()
+                Toast.makeText(requireContext(), "Internet working", Toast.LENGTH_LONG).show()
+            } else {
+                binding.progressIndicator.show()
+                Toast.makeText(requireContext(), "No internet", Toast.LENGTH_LONG).show()
             }
         }
 
