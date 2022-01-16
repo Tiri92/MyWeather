@@ -3,16 +3,16 @@
     <item
         android:id="@+id/page_1"
         android:enabled="true"
-        android:icon="@drawable/ic_launcher_background"
-        android:title="@string/text_label_1" />
+        android:icon="@drawable/twotone_cloud_circle_24"
+        android:title="@string/weather" />
     <item
         android:id="@+id/page_2"
         android:enabled="true"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/baseline_wifi_off_24"
         android:title="@string/text_label_2" />
     <item
         android:id="@+id/page_3"
         android:enabled="true"
-        android:icon="@drawable/ic_launcher_background"
+        android:icon="@drawable/baseline_cloud_off_24"
         android:title="@string/text_label_3" />
 </menu>
