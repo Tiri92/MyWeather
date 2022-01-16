@@ -8,6 +8,7 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -19,6 +20,8 @@ import thierry.myweather.utils.Utils
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +75,10 @@ class MainActivity : AppCompatActivity() {
                         getString(R.string.valid_internet_connection),
                         ContextCompat.getColor(applicationContext, R.color.green)
                     )
+                    runOnUiThread {
+                        viewModel.getCurrentConnectionState(true)
+                        viewModel.setCurrentConnectionState()
+                    }
                 }
 
                 override fun onLost(network: Network) {
@@ -81,6 +88,10 @@ class MainActivity : AppCompatActivity() {
                         getString(R.string.no_internet_connection),
                         ContextCompat.getColor(applicationContext, R.color.red)
                     )
+                    runOnUiThread {
+                        viewModel.getCurrentConnectionState(false)
+                        viewModel.setCurrentConnectionState()
+                    }
                 }
             })
     }
