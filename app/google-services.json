@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "244894484022",
+    "project_id": "myweather-27bc1",
+    "storage_bucket": "myweather-27bc1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:244894484022:android:0d5ac0d67cc0436142fa97",
+        "android_client_info": {
+          "package_name": "thierry.myweather"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "244894484022-pfqbm3qrv9kc58ul5ua3p6m0fcdm0gf2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "thierry.myweather",
+            "certificate_hash": "79bfaec744edb8736ddd287009fddb1caecd92b8"
+          }
+        },
+        {
+          "client_id": "244894484022-djd9ovec40nlhkc16l66arnjkkjrreht.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArhyqZxGbFszOeOHWS-m9z7F7hWs5GWU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "244894484022-djd9ovec40nlhkc16l66arnjkkjrreht.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
