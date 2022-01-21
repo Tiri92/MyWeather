@@ -4,14 +4,83 @@ import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import thierry.myweather.model.City
+import thierry.myweather.model.OpenWeatherResponse
+import thierry.myweather.repositories.FirestoreRepository
+import thierry.myweather.repositories.OpenWeatherMapRepository
 import thierry.myweather.repositories.WeatherDatabaseRepository
 import javax.inject.Inject
 
 @HiltViewModel
-class CitiesViewModel @Inject constructor(private val weatherDatabaseRepository: WeatherDatabaseRepository) :
+class CitiesViewModel @Inject constructor(
+    private val weatherDatabaseRepository: WeatherDatabaseRepository,
+    private val openWeatherMapRepository: OpenWeatherMapRepository,
+    private val firestoreRepository: FirestoreRepository
+) :
     ViewModel() {
 
-    fun getCities() = weatherDatabaseRepository.getCities().asLiveData()
+    private val mediatorLiveData: MediatorLiveData<CitiesViewState> =
+        MediatorLiveData<CitiesViewState>()
+    private var getCitiesFromRoom = weatherDatabaseRepository.getCities().asLiveData()
+    private var getOpenWeatherResponseFromApi = openWeatherMapRepository.getOpenWeatherResponse()
+    private var getOpenWeatherResponseFromFirestore =
+        firestoreRepository.getOpenWeatherResponseFromFirestore()
+
+    init {
+
+        mediatorLiveData.addSource(getCitiesFromRoom) { citiesListFromRoom ->
+            if (citiesListFromRoom != null) {
+                combine(
+                    citiesListFromRoom,
+                    getOpenWeatherResponseFromApi.value,
+                    firestoreRepository.openWeatherResponseListFromFirestore
+                )
+            }
+        }
+
+        mediatorLiveData.addSource(getOpenWeatherResponseFromApi) { openWeatherResponseFromApi ->
+            if (openWeatherResponseFromApi != null) {
+                combine(
+                    getCitiesFromRoom.value,
+                    openWeatherResponseFromApi,
+                    firestoreRepository.openWeatherResponseListFromFirestore
+                )
+            }
+        }
+
+        mediatorLiveData.addSource(getOpenWeatherResponseFromFirestore) { openWeatherResponse ->
+            if (openWeatherResponse != null) {
+                firestoreRepository.openWeatherResponseListFromFirestore.add(openWeatherResponse)
+                combine(
+                    getCitiesFromRoom.value,
+                    getOpenWeatherResponseFromApi.value,
+                    firestoreRepository.openWeatherResponseListFromFirestore
+                )
+            }
+        }
+
+    }
+
+    private fun combine(
+        citiesListFromRoom: List<City>?,
+        openWeatherResponseFromApi: OpenWeatherResponse?,
+        openWeatherResponseListFromFirestore: List<OpenWeatherResponse>?
+    ) {
+        val viewState = CitiesViewState()
+        viewState.citiesList = citiesListFromRoom
+
+        if (citiesListFromRoom != null && openWeatherResponseListFromFirestore.isNullOrEmpty()) {
+            citiesListFromRoom.forEach { city ->
+                firestoreRepository.callOpenWeatherResponseFirestoreRequest("${city.name}-${city.countryCode}")
+            }
+        }
+
+        viewState.openWeatherResponseList = openWeatherResponseListFromFirestore
+        mediatorLiveData.value = viewState
+    }
+
+    fun getViewState(): LiveData<CitiesViewState> {
+        return mediatorLiveData
+    }
 
     fun addCity(city: City) = viewModelScope.launch {
         cityIsSuccessfullyInserted.value = weatherDatabaseRepository.addCity(city)
@@ -28,6 +97,24 @@ class CitiesViewModel @Inject constructor(private val weatherDatabaseRepository:
 
     fun deleteCity(city: City) = viewModelScope.launch {
         weatherDatabaseRepository.deleteCity(city)
+    }
+
+    fun callOpenWeatherMap(cityName: String, countryName: String) {
+        openWeatherMapRepository.callOpenWeatherMapApi(cityName, countryName)
+    }
+
+    fun createCityInFirestore(city: City) {
+        firestoreRepository.createCityInFirestore(city)
+    }
+
+    fun createCityWeatherInFirestore(
+        openWeatherResponse: OpenWeatherResponse,
+        cityAndCountryName: String
+    ) {
+        firestoreRepository.createInfoCityWeatherInFirestore(
+            openWeatherResponse,
+            cityAndCountryName
+        )
     }
 
 }

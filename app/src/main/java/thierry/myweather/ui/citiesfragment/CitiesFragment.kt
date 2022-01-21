@@ -21,6 +21,7 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import thierry.myweather.R
 import thierry.myweather.databinding.FragmentCitiesBinding
 import thierry.myweather.model.City
+import thierry.myweather.model.OpenWeatherResponse
 import thierry.myweather.ui.cityDetailFragment.CityDetailFragment
 import thierry.myweather.utils.Utils
 import java.util.*
@@ -42,10 +43,27 @@ class CitiesFragment : Fragment() {
             requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNav.isVisible = true
 
-        viewModel.getCities().observe(viewLifecycleOwner) { citiesList ->
-            if (citiesList != null) {
+        viewModel.getViewState().observe(viewLifecycleOwner) { citiesViewState ->
+            if (citiesViewState.citiesList != null) {
                 recyclerView = binding.recyclerviewCities
-                setUpRecyclerView(recyclerView!!, citiesList.sortedBy { city -> city.position })
+
+                if (!citiesViewState.openWeatherResponseList.isNullOrEmpty()) {
+                    setUpRecyclerView(
+                        recyclerView!!,
+                        citiesViewState.citiesList!!.sortedBy { city -> city.position },
+                        citiesViewState.openWeatherResponseList
+                    )
+                } else {
+                    citiesViewState.citiesList!!.forEach { city ->
+                        // viewModel.callOpenWeatherMap(city.name.toString(), "FR")
+                        // viewModel.createCityInFirestore(city)
+                    }
+                    setUpRecyclerView(
+                        recyclerView!!,
+                        citiesViewState.citiesList!!.sortedBy { city -> city.position },
+                        null
+                    )
+                }
 
                 val adapterSortedCitiesList =
                     (binding.recyclerviewCities.adapter as CitiesAdapter).cities
@@ -62,8 +80,8 @@ class CitiesFragment : Fragment() {
                         target: RecyclerView.ViewHolder,
                     ): Boolean {
 
-                        val fromPosition = viewHolder.adapterPosition
-                        val toPosition = target.adapterPosition
+                        val fromPosition = viewHolder.absoluteAdapterPosition
+                        val toPosition = target.absoluteAdapterPosition
 
                         Collections.swap(adapterSortedCitiesList, fromPosition, toPosition)
                         recyclerView.adapter?.notifyItemMoved(fromPosition, toPosition)
@@ -215,12 +233,13 @@ class CitiesFragment : Fragment() {
 
     private fun setUpRecyclerView(
         recyclerView: RecyclerView,
-        citiesList: List<City>
+        citiesList: List<City>,
+        openWeatherResponseList: List<OpenWeatherResponse>?
     ) {
         val myLayoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = myLayoutManager
-        recyclerView.adapter = CitiesAdapter(citiesList)
+        recyclerView.adapter = CitiesAdapter(citiesList, openWeatherResponseList)
     }
 
     fun refreshFragment() {
