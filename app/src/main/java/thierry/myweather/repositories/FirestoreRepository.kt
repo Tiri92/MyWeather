@@ -49,8 +49,8 @@ class FirestoreRepository @Inject constructor() {
             .set(openWeatherResponse)
     }
 
-    // Get All Cities
-    fun getAllCities(): LiveData<List<City>> {
+    // Get All Cities from Firestore
+    fun callAndGetCitiesFromFirestore(): LiveData<List<City>> {
         val mutableCitiesList: MutableLiveData<List<City>> = MutableLiveData<List<City>>()
         getWeatherCollection()
             .addSnapshotListener { value: QuerySnapshot?, error: FirebaseFirestoreException? ->

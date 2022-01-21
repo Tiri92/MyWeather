@@ -208,7 +208,7 @@ class CitiesFragment : Fragment() {
                             ContextCompat.getColor(requireContext(), R.color.red)
                         )
                     } else {
-                        viewModel.addCity(City(name = typedText))
+                        viewModel.addCity(City(name = typedText, countryCode = "FR"))
                         viewModel.cityIsSuccessfullyInserted()
                             .observe(viewLifecycleOwner) {
                                 refreshFragment()
