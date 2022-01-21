@@ -25,7 +25,7 @@ class OpenWeatherMapRepository @Inject constructor(private val openWeatherMapSer
         return isFailure
     }
 
-    fun callOpenWeatherMap(cityName: String, countryName: String) {
+    fun callOpenWeatherMapApi(cityName: String, countryName: String) {
         val cityNameAndCountryName = "$cityName,$countryName"
         openWeatherMapService.getWeatherByCityName(cityNameAndCountryName)
             .enqueue(object : Callback<OpenWeatherResponse> {

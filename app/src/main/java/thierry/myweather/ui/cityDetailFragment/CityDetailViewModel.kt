@@ -16,7 +16,7 @@ class CityDetailViewModel @Inject constructor(
     ViewModel() {
 
     fun callOpenWeatherMap(cityName: String, countryName: String) {
-        openWeatherMapRepository.callOpenWeatherMap(cityName, countryName)
+        openWeatherMapRepository.callOpenWeatherMapApi(cityName, countryName)
     }
 
     fun getOpenWeatherResponse(): LiveData<OpenWeatherResponse> {
