@@ -191,6 +191,19 @@ class CitiesFragment : Fragment() {
                 val itemTouchHelper = ItemTouchHelper(simpleCallback)
                 itemTouchHelper.attachToRecyclerView(recyclerView)
             }
+
+            binding.swipeRefreshLayout.setOnRefreshListener {
+                citiesViewState.citiesList?.forEach { city ->
+                    viewModel.callOpenWeatherMap(city.name!!, city.countryCode!!)
+                }
+                Utils.displayCustomSnackbar(
+                    requireView(),
+                    getString(R.string.weather_info_updated),
+                    ContextCompat.getColor(requireContext(), R.color.cyan_200)
+                )
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
+
         }
 
         binding.addCityButton.setOnClickListener {
