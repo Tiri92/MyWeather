@@ -21,7 +21,7 @@ class CitiesViewModel @Inject constructor(
     private val mediatorLiveData: MediatorLiveData<CitiesViewState> =
         MediatorLiveData<CitiesViewState>()
     private var getCitiesFromRoom = weatherDatabaseRepository.getCities().asLiveData()
-    private var callAndGetCitiesFromFirestore = firestoreRepository.callAndGetCitiesFromFirestore()
+    private var getCitiesFromFirestore = firestoreRepository.getCitiesFromFirestore()
     private var getOpenWeatherResponseFromApi = openWeatherMapRepository.getOpenWeatherResponse()
     private var getOpenWeatherResponseFromFirestore =
         firestoreRepository.getOpenWeatherResponseFromFirestore()
@@ -33,16 +33,17 @@ class CitiesViewModel @Inject constructor(
                 citiesListFromRoom.forEach { city ->
                     firestoreRepository.callOpenWeatherResponseFirestoreRequest("${city.name}-${city.countryCode}")
                 }
+                firestoreRepository.callCitiesFromFirestore()
                 combine(
                     citiesListFromRoom,
-                    callAndGetCitiesFromFirestore.value,
+                    getCitiesFromFirestore.value,
                     getOpenWeatherResponseFromApi.value,
                     firestoreRepository.openWeatherResponseListFromFirestore
                 )
             }
         }
 
-        mediatorLiveData.addSource(callAndGetCitiesFromFirestore) { citiesListFromFirestore ->
+        mediatorLiveData.addSource(getCitiesFromFirestore) { citiesListFromFirestore ->
             if (!citiesListFromFirestore.isNullOrEmpty()) {
                 combine(
                     getCitiesFromRoom.value,
@@ -50,6 +51,11 @@ class CitiesViewModel @Inject constructor(
                     getOpenWeatherResponseFromApi.value,
                     firestoreRepository.openWeatherResponseListFromFirestore
                 )
+            } else {
+                getCitiesFromRoom.value?.forEach { city ->
+                    firestoreRepository.createCityInFirestore(city)
+                    openWeatherMapRepository.callOpenWeatherMapApi(city.name!!, city.countryCode!!)
+                }
             }
         }
 
@@ -64,7 +70,7 @@ class CitiesViewModel @Inject constructor(
                 )
                 combine(
                     getCitiesFromRoom.value,
-                    callAndGetCitiesFromFirestore.value,
+                    getCitiesFromFirestore.value,
                     openWeatherResponseFromApi,
                     firestoreRepository.openWeatherResponseListFromFirestore
                 )
@@ -76,7 +82,7 @@ class CitiesViewModel @Inject constructor(
                 firestoreRepository.openWeatherResponseListFromFirestore.add(openWeatherResponse)
                 combine(
                     getCitiesFromRoom.value,
-                    callAndGetCitiesFromFirestore.value,
+                    getCitiesFromFirestore.value,
                     getOpenWeatherResponseFromApi.value,
                     firestoreRepository.openWeatherResponseListFromFirestore
                 )

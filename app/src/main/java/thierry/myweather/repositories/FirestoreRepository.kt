@@ -22,6 +22,9 @@ class FirestoreRepository @Inject constructor() {
     private val mutableOpenWeatherResponseFromFirestore: MutableLiveData<OpenWeatherResponse> =
         MutableLiveData<OpenWeatherResponse>()
 
+    private val mutableCitiesListFromFirestore: MutableLiveData<List<City>> =
+        MutableLiveData<List<City>>()
+
     // Get the Collection Reference
     private fun getWeatherCollection(): CollectionReference {
         return FirebaseFirestore.getInstance().collection(COLLECTION_WEATHER)
@@ -49,9 +52,8 @@ class FirestoreRepository @Inject constructor() {
             .set(openWeatherResponse)
     }
 
-    // Get All Cities from Firestore
-    fun callAndGetCitiesFromFirestore(): LiveData<List<City>> {
-        val mutableCitiesList: MutableLiveData<List<City>> = MutableLiveData<List<City>>()
+    // Launch request for get all Cities from Firestore
+    fun callCitiesFromFirestore() {
         getWeatherCollection()
             .addSnapshotListener { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
                 val citiesList: MutableList<City> = ArrayList<City>()
@@ -61,12 +63,16 @@ class FirestoreRepository @Inject constructor() {
                         citiesList.add(city!!)
                     }
                 }
-                mutableCitiesList.setValue(citiesList)
+                mutableCitiesListFromFirestore.setValue(citiesList)
             }
-        return mutableCitiesList
     }
 
-    // Get All info about a City weather
+    // Get all Cities from firestore
+    fun getCitiesFromFirestore(): LiveData<List<City>> {
+        return mutableCitiesListFromFirestore
+    }
+
+    // Launch request for get all info about a City weather
     val openWeatherResponseListFromFirestore = mutableListOf<OpenWeatherResponse>()
     fun callOpenWeatherResponseFirestoreRequest(cityAndCountryName: String) {
         getWeatherInfoCollection(cityAndCountryName)
