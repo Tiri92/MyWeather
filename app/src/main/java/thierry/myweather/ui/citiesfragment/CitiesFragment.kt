@@ -208,7 +208,14 @@ class CitiesFragment : Fragment() {
                             ContextCompat.getColor(requireContext(), R.color.red)
                         )
                     } else {
-                        viewModel.addCity(City(name = typedText, countryCode = "FR"))
+                        val newCity = City(name = typedText, countryCode = "FR")
+                        viewModel.addCity(
+                            City(
+                                name = newCity.name,
+                                countryCode = newCity.countryCode
+                            )
+                        )
+                        viewModel.createCityInFirestore(newCity)
                         viewModel.cityIsSuccessfullyInserted()
                             .observe(viewLifecycleOwner) {
                                 refreshFragment()
