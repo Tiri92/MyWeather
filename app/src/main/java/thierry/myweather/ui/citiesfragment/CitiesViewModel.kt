@@ -63,7 +63,7 @@ class CitiesViewModel @Inject constructor(
 
         mediatorLiveData.addSource(getOpenWeatherResponseFromFirestore) { openWeatherResponse ->
             if (openWeatherResponse != null) {
-                firestoreRepository.openWeatherResponseListFromFirestore.add(openWeatherResponse)
+                //firestoreRepository.openWeatherResponseListFromFirestore.add(openWeatherResponse)
                 combine(
                     getCitiesFromRoom.value,
                     callAndGetCitiesFromFirestore.value,
@@ -86,23 +86,13 @@ class CitiesViewModel @Inject constructor(
 
         if (!citiesListFromRoom.isNullOrEmpty() && citiesListFromRoom.size != citiesListFromFirestore?.size) {
             citiesListFromRoom.forEach { city ->
-                firestoreRepository.createCityInFirestore(city)
+                val finded =
+                    openWeatherResponseListFromFirestore?.find { predicate -> city.name == predicate.name }
+                if (finded == null) {
+                    openWeatherMapRepository.callOpenWeatherMapApi(city.name!!, city.countryCode!!)
+                }
             }
         }
-
-//        // Pour activer ça lancer la requete vers l'api
-//        if (citiesListFromRoom != null && openWeatherResponseFromApi != null) {
-//            citiesListFromRoom.forEach { city ->
-//                firestoreRepository.createInfoCityWeatherInFirestore(
-//                    openWeatherResponseFromApi,
-//                    "${city.name}-${city.countryCode}"
-//                )
-//            }
-//        } else if (!citiesListFromRoom.isNullOrEmpty()) {
-//            citiesListFromRoom.forEach { city ->
-//                openWeatherMapRepository.callOpenWeatherMapApi(city.name!!, city.countryCode!!)
-//            }
-//        }
 
         if (citiesListFromRoom != null && openWeatherResponseListFromFirestore.isNullOrEmpty()) {
             citiesListFromRoom.forEach { city ->
@@ -137,6 +127,10 @@ class CitiesViewModel @Inject constructor(
 
     fun callOpenWeatherMap(cityName: String, countryName: String) {
         openWeatherMapRepository.callOpenWeatherMapApi(cityName, countryName)
+    }
+
+    fun createCityInFirestore(city: City) {
+        firestoreRepository.createCityInFirestore(city)
     }
 
     fun createInfoCityWeatherInFirestore(
