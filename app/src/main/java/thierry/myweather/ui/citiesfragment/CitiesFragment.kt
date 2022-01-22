@@ -216,6 +216,7 @@ class CitiesFragment : Fragment() {
                             )
                         )
                         viewModel.createCityInFirestore(newCity)
+                        viewModel.callOpenWeatherMap(newCity.name!!, newCity.countryCode!!)
                         viewModel.cityIsSuccessfullyInserted()
                             .observe(viewLifecycleOwner) {
                                 refreshFragment()
