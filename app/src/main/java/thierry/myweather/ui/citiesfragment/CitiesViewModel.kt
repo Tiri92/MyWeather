@@ -30,6 +30,9 @@ class CitiesViewModel @Inject constructor(
 
         mediatorLiveData.addSource(getCitiesFromRoom) { citiesListFromRoom ->
             if (citiesListFromRoom != null) {
+                citiesListFromRoom.forEach { city ->
+                    firestoreRepository.callOpenWeatherResponseFirestoreRequest("${city.name}-${city.countryCode}")
+                }
                 combine(
                     citiesListFromRoom,
                     callAndGetCitiesFromFirestore.value,
@@ -70,14 +73,14 @@ class CitiesViewModel @Inject constructor(
 
         mediatorLiveData.addSource(getOpenWeatherResponseFromFirestore) { openWeatherResponse ->
             if (openWeatherResponse != null) {
-                //firestoreRepository.openWeatherResponseListFromFirestore.add(openWeatherResponse)
+                firestoreRepository.openWeatherResponseListFromFirestore.add(openWeatherResponse)
                 combine(
                     getCitiesFromRoom.value,
                     callAndGetCitiesFromFirestore.value,
                     getOpenWeatherResponseFromApi.value,
                     firestoreRepository.openWeatherResponseListFromFirestore
                 )
-            }
+            } // Je passe pas dans le Else quand y a pas de result alors qu'on a lancé requete firestore, exemple si 5 requete et que la derniere renvoie rien, j'passe pas dans le else, Button ?
         }
 
     }
@@ -91,21 +94,15 @@ class CitiesViewModel @Inject constructor(
         val viewState = CitiesViewState()
         viewState.citiesList = citiesListFromRoom
 
-        if (!citiesListFromRoom.isNullOrEmpty() && citiesListFromRoom.size != citiesListFromFirestore?.size) {
-            citiesListFromRoom.forEach { city ->
-                val finded =
-                    openWeatherResponseListFromFirestore?.find { predicate -> city.name == predicate.name }
-                if (finded == null) {
-                    openWeatherMapRepository.callOpenWeatherMapApi(city.name!!, city.countryCode!!)
-                }
-            }
-        }
-
-        if (citiesListFromRoom != null && openWeatherResponseListFromFirestore.isNullOrEmpty()) {
-            citiesListFromRoom.forEach { city ->
-                firestoreRepository.callOpenWeatherResponseFirestoreRequest("${city.name}-${city.countryCode}")
-            }
-        }
+//        if (!citiesListFromRoom.isNullOrEmpty() && citiesListFromRoom.size != citiesListFromFirestore?.size) {
+//            citiesListFromRoom.forEach { city ->
+//                val finded =
+//                    openWeatherResponseListFromFirestore?.find { predicate -> city.name == predicate.name }
+//                if (finded == null) {
+//                    openWeatherMapRepository.callOpenWeatherMapApi(city.name!!, city.countryCode!!)
+//                }
+//            }
+//        }
 
         viewState.openWeatherResponseList = openWeatherResponseListFromFirestore
         mediatorLiveData.value = viewState
