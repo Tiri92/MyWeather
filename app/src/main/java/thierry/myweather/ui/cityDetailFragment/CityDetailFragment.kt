@@ -42,17 +42,66 @@ class CityDetailFragment : Fragment() {
             cityCountry = it?.getString(ARG_PARAM_CITY_COUNTRY)
         }
 
+        if (!viewModel.getOpenWeatherResponseListFromFirestore().isNullOrEmpty()) {
+            viewModel.getOpenWeatherResponseListFromFirestore()
+                .forEach { openWeatherResponseFromFirestore ->
+                    if (cityName == openWeatherResponseFromFirestore.name && cityCountry == openWeatherResponseFromFirestore.sys?.country) {
+                        binding.cityName.text = openWeatherResponseFromFirestore.name
+                        binding.weatherImageviewDescription.text =
+                            openWeatherResponseFromFirestore.weather?.get(0)?.description
+                        Glide.with(rootView)
+                            .load(
+                                "http://openweathermap.org/img/wn/${
+                                    openWeatherResponseFromFirestore.weather?.get(
+                                        0
+                                    )?.icon
+                                }@2x.png"
+                            )
+                            .centerCrop().into(binding.weatherImageview)
+                        Log.i(
+                            "THIERRYBITAR",
+                            "${openWeatherResponseFromFirestore.main?.temp} à ${openWeatherResponseFromFirestore.name}"
+                        )
+
+                    }
+                }
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "No weather info available, active internet please ?",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        viewModel.getOpenWeatherResponseFromFirestore()
+            .observe(viewLifecycleOwner) { openWeatherResponseFromFirestore ->
+                if (openWeatherResponseFromFirestore != null && openWeatherResponseFromFirestore.name == cityName && openWeatherResponseFromFirestore.sys?.country == cityCountry) {
+                    binding.cityName.text = openWeatherResponseFromFirestore.name
+                    binding.weatherImageviewDescription.text =
+                        openWeatherResponseFromFirestore.weather?.get(0)?.description
+                    Glide.with(rootView)
+                        .load(
+                            "http://openweathermap.org/img/wn/${
+                                openWeatherResponseFromFirestore.weather?.get(
+                                    0
+                                )?.icon
+                            }@2x.png"
+                        )
+                        .centerCrop().into(binding.weatherImageview)
+                    Log.i(
+                        "THIERRYBITAR",
+                        "${openWeatherResponseFromFirestore.main?.temp} à ${openWeatherResponseFromFirestore.name}"
+                    )
+                }
+            }
+
         viewModel.getOpenWeatherResponse().observe(viewLifecycleOwner) { openWeatherResponse ->
-            binding.cityName.text = openWeatherResponse.name
-            binding.weatherImageviewDescription.text =
-                openWeatherResponse.weather?.get(0)?.description
-            Glide.with(requireView())
-                .load("http://openweathermap.org/img/wn/${openWeatherResponse.weather?.get(0)?.icon}@2x.png")
-                .centerCrop().into(binding.weatherImageview)
-            Log.i(
-                "THIERRYBITAR",
-                "${openWeatherResponse.main?.temp} à ${openWeatherResponse.name}"
-            )
+            if (openWeatherResponse != null) {
+                viewModel.updateInfoCityWeatherInFirestore(
+                    openWeatherResponse,
+                    "${openWeatherResponse.name}-${openWeatherResponse.sys?.country}"
+                )
+            }
         }
 
         viewModel.getIsFailure().observe(viewLifecycleOwner) { isFailure ->
@@ -71,7 +120,6 @@ class CityDetailFragment : Fragment() {
 
         viewModel.getCurrentConnectionState().observe(viewLifecycleOwner) { isConnected ->
             if (isConnected && isFailure == true) {
-                viewModel.callOpenWeatherMap(cityName.toString(), "fr")
                 Toast.makeText(requireContext(), "Internet working again", Toast.LENGTH_LONG).show()
             } else if (isConnected) {
                 binding.progressIndicator.hide()
@@ -80,6 +128,11 @@ class CityDetailFragment : Fragment() {
                 binding.progressIndicator.show()
                 Toast.makeText(requireContext(), "No internet", Toast.LENGTH_LONG).show()
             }
+        }
+
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.callOpenWeatherMap(cityName!!, cityCountry!!)
+            binding.swipeRefresh.isRefreshing = false
         }
 
         return rootView
