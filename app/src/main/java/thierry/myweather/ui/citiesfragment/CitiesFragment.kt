@@ -206,18 +206,22 @@ class CitiesFragment : Fragment() {
             MaterialAlertDialogBuilder(requireContext())
                 .setView(R.layout.dialog_add_city)
                 .setPositiveButton(resources.getString(R.string.add)) { dialog, _ ->
-                    val typedText =
+                    val cityNameTyped =
                         (dialog as androidx.appcompat.app.AlertDialog).findViewById<TextInputEditText>(
                             R.id.edittext_add_city
                         )?.text.toString()
-                    if (typedText.trim().isEmpty()) {
+                    val countryCodeTyped =
+                        (dialog).findViewById<TextInputEditText>(
+                            R.id.edittext_add_country
+                        )?.text.toString()
+                    if (cityNameTyped.trim().isEmpty() || countryCodeTyped.trim().isEmpty()) {
                         Utils.displayCustomSnackbar(
                             requireView(),
                             getString(R.string.field_cant_be_empty),
                             ContextCompat.getColor(requireContext(), R.color.red)
                         )
                     } else {
-                        val newCity = City(name = typedText, countryCode = "FR")
+                        val newCity = City(name = cityNameTyped, countryCode = countryCodeTyped)
                         viewModel.addCity(
                             City(
                                 name = newCity.name,

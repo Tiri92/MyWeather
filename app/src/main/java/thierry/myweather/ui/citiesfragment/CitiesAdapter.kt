@@ -22,6 +22,7 @@ class CitiesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.cityName.text = cities[position].name
+        holder.cityCountry.text = cities[position].countryCode
         holder.cityName.tag = cities[position].id
         Glide.with(holder.itemView).load(R.drawable.twotone_cloud_circle_24)
             .into(holder.cityImage)
@@ -29,7 +30,7 @@ class CitiesAdapter(
         if (openWeatherResponseList != null) {
             holder.cityTemperature.text = openWeatherResponseList.size.toString()
             openWeatherResponseList.forEach { response ->
-                if (holder.cityName.text.toString() == response.name.toString()) {
+                if (holder.cityName.text.toString() == response.name.toString() && holder.cityCountry.text.toString() == response.sys?.country) {
                     holder.cityTemperature.text = response.main?.temp.toString()
                 }
             }
@@ -45,6 +46,7 @@ class CitiesAdapter(
         val cityName = binding.cityName
         val cityImage = binding.cityImage
         val cityTemperature = binding.cityTemp
+        val cityCountry = binding.cityCountry
     }
 
 }
