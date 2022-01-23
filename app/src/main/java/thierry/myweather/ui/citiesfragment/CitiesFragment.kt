@@ -200,52 +200,65 @@ class CitiesFragment : Fragment() {
                 binding.swipeRefreshLayout.isRefreshing = false
             }
 
-        }
-
-        binding.addCityButton.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext())
-                .setView(R.layout.dialog_add_city)
-                .setPositiveButton(resources.getString(R.string.add)) { dialog, _ ->
-                    val cityNameTyped =
-                        (dialog as androidx.appcompat.app.AlertDialog).findViewById<TextInputEditText>(
-                            R.id.edittext_add_city
-                        )?.text.toString()
-                    val countryCodeTyped =
-                        (dialog).findViewById<TextInputEditText>(
-                            R.id.edittext_add_country
-                        )?.text.toString()
-                    if (cityNameTyped.trim().isEmpty() || countryCodeTyped.trim().isEmpty()) {
-                        Utils.displayCustomSnackbar(
-                            requireView(),
-                            getString(R.string.field_cant_be_empty),
-                            ContextCompat.getColor(requireContext(), R.color.red)
-                        )
-                    } else {
-                        val newCity = City(name = cityNameTyped, countryCode = countryCodeTyped)
-                        viewModel.addCity(
-                            City(
-                                name = newCity.name,
-                                countryCode = newCity.countryCode
+            binding.addCityButton.setOnClickListener {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setView(R.layout.dialog_add_city)
+                    .setPositiveButton(resources.getString(R.string.add)) { dialog, _ ->
+                        val cityNameTyped =
+                            (dialog as androidx.appcompat.app.AlertDialog).findViewById<TextInputEditText>(
+                                R.id.edittext_add_city
+                            )?.text.toString()
+                        val countryCodeTyped =
+                            (dialog).findViewById<TextInputEditText>(
+                                R.id.edittext_add_country
+                            )?.text.toString()
+                        if (cityNameTyped.trim().isEmpty() || countryCodeTyped.trim().isEmpty()) {
+                            Utils.displayCustomSnackbar(
+                                requireView(),
+                                getString(R.string.field_cant_be_empty),
+                                ContextCompat.getColor(requireContext(), R.color.red)
                             )
-                        )
-                        viewModel.callOpenWeatherMap(newCity.name!!, newCity.countryCode!!)
-                        viewModel.cityIsSuccessfullyInserted()
-                            .observe(viewLifecycleOwner) {
-                                refreshFragment()
+                        } else {
+                            val newCity = City(name = cityNameTyped, countryCode = countryCodeTyped)
+                            val cityFound =
+                                citiesViewState.citiesList?.find { city -> city.name == newCity.name && city.countryCode == newCity.countryCode }
+                            if (cityFound == null) {
+                                viewModel.addCity(
+                                    City(
+                                        name = newCity.name,
+                                        countryCode = newCity.countryCode
+                                    )
+                                )
+                                viewModel.callOpenWeatherMap(newCity.name!!, newCity.countryCode!!)
+                                viewModel.cityIsSuccessfullyInserted()
+                                    .observe(viewLifecycleOwner) {
+                                        refreshFragment()
+                                        Utils.displayCustomSnackbar(
+                                            requireView(),
+                                            getString(R.string.city_successfully_added),
+                                            ContextCompat.getColor(
+                                                requireContext(),
+                                                R.color.green
+                                            )
+                                        )
+                                    }
+                            } else {
                                 Utils.displayCustomSnackbar(
                                     requireView(),
-                                    getString(R.string.city_successfully_added),
+                                    getString(R.string.city_already_exist),
                                     ContextCompat.getColor(
                                         requireContext(),
-                                        R.color.green
+                                        R.color.red
                                     )
                                 )
                             }
+                        }
                     }
-                }
-                .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
-                }
-                .show()
+                    .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
+                    }
+                    .show()
+            }
+
         }
 
         return rootView
