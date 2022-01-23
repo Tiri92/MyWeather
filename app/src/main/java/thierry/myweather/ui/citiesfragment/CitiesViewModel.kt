@@ -100,7 +100,7 @@ class CitiesViewModel @Inject constructor(
                     getOpenWeatherResponseFromApi.value,
                     firestoreRepository.openWeatherResponseListFromFirestore
                 )
-            } // Je passe pas dans le Else quand y a pas de result alors qu'on a lancé requete firestore, exemple si 5 requete et que la derniere renvoie rien, j'passe pas dans le else, Button ?
+            }
         }
 
     }
@@ -113,16 +113,6 @@ class CitiesViewModel @Inject constructor(
     ) {
         val viewState = CitiesViewState()
         viewState.citiesList = citiesListFromRoom
-
-//        if (!citiesListFromRoom.isNullOrEmpty() && citiesListFromRoom.size != citiesListFromFirestore?.size) {
-//            citiesListFromRoom.forEach { city ->
-//                val finded =
-//                    openWeatherResponseListFromFirestore?.find { predicate -> city.name == predicate.name }
-//                if (finded == null) {
-//                    openWeatherMapRepository.callOpenWeatherMapApi(city.name!!, city.countryCode!!)
-//                }
-//            }
-//        }
 
         viewState.openWeatherResponseList = openWeatherResponseListFromFirestore
         mediatorLiveData.value = viewState
@@ -151,22 +141,6 @@ class CitiesViewModel @Inject constructor(
 
     fun callOpenWeatherMap(cityName: String, countryName: String) {
         openWeatherMapRepository.callOpenWeatherMapApi(cityName, countryName)
-    }
-
-    fun createCityInFirestore(city: City) {
-        firestoreRepository.createCityInFirestore(city)
-    }
-
-    fun createInfoCityWeatherInFirestore(
-        citiesListFromRoom: List<City>,
-        openWeatherResponseFromApi: OpenWeatherResponse
-    ) {
-        citiesListFromRoom.forEach { city ->
-            firestoreRepository.createInfoCityWeatherInFirestore(
-                openWeatherResponseFromApi,
-                "${city.name}-${city.countryCode}"
-            )
-        }
     }
 
 }

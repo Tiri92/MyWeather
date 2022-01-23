@@ -54,10 +54,6 @@ class CitiesFragment : Fragment() {
                         citiesViewState.openWeatherResponseList
                     )
                 } else {
-                    citiesViewState.citiesList!!.forEach { city ->
-                        // viewModel.callOpenWeatherMap(city.name.toString(), "FR")
-                        // viewModel.createCityInFirestore(city)
-                    }
                     setUpRecyclerView(
                         recyclerView!!,
                         citiesViewState.citiesList!!.sortedBy { city -> city.position },
