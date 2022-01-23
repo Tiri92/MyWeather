@@ -229,6 +229,7 @@ class CitiesFragment : Fragment() {
                                         countryCode = newCity.countryCode
                                     )
                                 )
+                                viewModel.clearOpenWeatherResponseListFromFirestore()
                                 viewModel.callOpenWeatherMap(newCity.name!!, newCity.countryCode!!)
                                 viewModel.cityIsSuccessfullyInserted()
                                     .observe(viewLifecycleOwner) {

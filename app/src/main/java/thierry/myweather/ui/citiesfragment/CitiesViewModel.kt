@@ -1,5 +1,6 @@
 package thierry.myweather.ui.citiesfragment
 
+import android.util.Log
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -27,6 +28,8 @@ class CitiesViewModel @Inject constructor(
         firestoreRepository.getOpenWeatherResponseFromFirestore()
 
     init {
+
+        firestoreRepository.openWeatherResponseListFromFirestore.clear()
 
         mediatorLiveData.addSource(getCitiesFromRoom) { citiesListFromRoom ->
             if (citiesListFromRoom != null) {
@@ -79,9 +82,6 @@ class CitiesViewModel @Inject constructor(
                     openWeatherResponseFromApi,
                     "${openWeatherResponseFromApi.name}-${openWeatherResponseFromApi.sys?.country}"
                 )
-                firestoreRepository.openWeatherResponseListFromFirestore.add(
-                    openWeatherResponseFromApi
-                )
                 combine(
                     getCitiesFromRoom.value,
                     getCitiesFromFirestore.value,
@@ -94,6 +94,10 @@ class CitiesViewModel @Inject constructor(
         mediatorLiveData.addSource(getOpenWeatherResponseFromFirestore) { openWeatherResponse ->
             if (openWeatherResponse != null) {
                 firestoreRepository.openWeatherResponseListFromFirestore.add(openWeatherResponse)
+                Log.i(
+                    "THIERRYBITAR",
+                    "${firestoreRepository.openWeatherResponseListFromFirestore.size}"
+                )
                 combine(
                     getCitiesFromRoom.value,
                     getCitiesFromFirestore.value,
@@ -141,6 +145,10 @@ class CitiesViewModel @Inject constructor(
 
     fun callOpenWeatherMap(cityName: String, countryName: String) {
         openWeatherMapRepository.callOpenWeatherMapApi(cityName, countryName)
+    }
+
+    fun clearOpenWeatherResponseListFromFirestore() {
+        firestoreRepository.openWeatherResponseListFromFirestore.clear()
     }
 
 }
