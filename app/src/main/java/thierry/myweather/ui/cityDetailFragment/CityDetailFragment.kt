@@ -16,12 +16,14 @@ import thierry.myweather.R
 import thierry.myweather.databinding.FragmentCityDetailBinding
 
 private const val ARG_PARAM_CITY_NAME = "city name"
+private const val ARG_PARAM_CITY_COUNTRY = "city country"
 
 @AndroidEntryPoint
 class CityDetailFragment : Fragment() {
 
     private val viewModel: CityDetailViewModel by viewModels()
     private var cityName: String? = null
+    private var cityCountry: String? = null
     private var isFailure: Boolean? = null
 
     override fun onCreateView(
@@ -37,9 +39,7 @@ class CityDetailFragment : Fragment() {
 
         arguments.let {
             cityName = it?.getString(ARG_PARAM_CITY_NAME)
-            if (cityName != null) {
-                viewModel.callOpenWeatherMap(cityName.toString(), "fr")
-            }
+            cityCountry = it?.getString(ARG_PARAM_CITY_COUNTRY)
         }
 
         viewModel.getOpenWeatherResponse().observe(viewLifecycleOwner) { openWeatherResponse ->
@@ -86,11 +86,12 @@ class CityDetailFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(cityName: String) = CityDetailFragment().apply {
+        fun newInstance(cityName: String, cityCountry: String) = CityDetailFragment().apply {
             arguments = Bundle().apply {
                 putString(
                     ARG_PARAM_CITY_NAME, cityName
                 )
+                putString(ARG_PARAM_CITY_COUNTRY, cityCountry)
             }
         }
     }

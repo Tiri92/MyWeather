@@ -131,6 +131,8 @@ class CitiesFragment : Fragment() {
                                 CityDetailFragment.newInstance(
                                     viewHolder.itemView.findViewById<TextView>(
                                         R.id.city_name
+                                    ).text.toString(), viewHolder.itemView.findViewById<TextView>(
+                                        R.id.city_country
                                     ).text.toString()
                                 )
                             ).addToBackStack("CityDetailFragment").commit()
