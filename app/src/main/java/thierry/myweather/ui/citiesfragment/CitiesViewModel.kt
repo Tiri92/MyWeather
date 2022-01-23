@@ -61,6 +61,20 @@ class CitiesViewModel @Inject constructor(
 
         mediatorLiveData.addSource(getOpenWeatherResponseFromApi) { openWeatherResponseFromApi ->
             if (openWeatherResponseFromApi != null) {
+                var cityFound = false
+                getCitiesFromFirestore.value?.forEach { city ->
+                    if (city.name == openWeatherResponseFromApi.name && city.countryCode == openWeatherResponseFromApi.sys?.country) {
+                        cityFound = true
+                    }
+                }
+                if (!cityFound) {
+                    firestoreRepository.createCityInFirestore(
+                        City(
+                            name = openWeatherResponseFromApi.name,
+                            countryCode = openWeatherResponseFromApi.sys?.country
+                        )
+                    )
+                }
                 firestoreRepository.createInfoCityWeatherInFirestore(
                     openWeatherResponseFromApi,
                     "${openWeatherResponseFromApi.name}-${openWeatherResponseFromApi.sys?.country}"
