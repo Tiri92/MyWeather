@@ -4,14 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import thierry.myweather.R
 import thierry.myweather.databinding.ItemCityBinding
 import thierry.myweather.model.City
 import thierry.myweather.model.OpenWeatherResponse
+import thierry.myweather.model.WeatherIconUrl
 
 class CitiesAdapter(
     val cities: List<City>,
-    private val openWeatherResponseList: List<OpenWeatherResponse>?
+    private val openWeatherResponseList: List<OpenWeatherResponse>?,
+    private val weatherIconsUrl: List<WeatherIconUrl>?
 ) :
     RecyclerView.Adapter<CitiesAdapter.ViewHolder>() {
 
@@ -24,14 +25,25 @@ class CitiesAdapter(
         holder.cityName.text = cities[position].name
         holder.cityCountry.text = cities[position].countryCode
         holder.cityName.tag = cities[position].id
-        Glide.with(holder.itemView).load(R.drawable.twotone_cloud_circle_24)
-            .into(holder.cityImage)
 
         if (openWeatherResponseList != null) {
             holder.cityTemperature.text = openWeatherResponseList.size.toString()
             openWeatherResponseList.forEach { response ->
                 if (holder.cityName.text.toString() == response.name.toString() && holder.cityCountry.text.toString() == response.sys?.country) {
                     holder.cityTemperature.text = response.main?.temp.toString()
+                    weatherIconsUrl?.forEach { weatherIconUrl ->
+                        if (weatherIconUrl.name == response.weather?.get(
+                                0
+                            )?.icon
+                        ) {
+                            Glide.with(holder.itemView)
+                                .load(
+                                    weatherIconUrl.firestoreStorageUrl
+                                )
+                                .centerCrop().into(holder.cityImage)
+                        }
+                    }
+
                 }
             }
         }

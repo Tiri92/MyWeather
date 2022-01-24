@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import thierry.myweather.model.City
 import thierry.myweather.model.OpenWeatherResponse
+import thierry.myweather.model.WeatherIconUrl
 import thierry.myweather.repositories.FirestoreRepository
 import thierry.myweather.repositories.OpenWeatherMapRepository
 import thierry.myweather.repositories.WeatherDatabaseRepository
@@ -22,6 +23,7 @@ class CitiesViewModel @Inject constructor(
     private val mediatorLiveData: MediatorLiveData<CitiesViewState> =
         MediatorLiveData<CitiesViewState>()
     private var getCitiesFromRoom = weatherDatabaseRepository.getCities().asLiveData()
+    private var getWeatherIconsUrl = weatherDatabaseRepository.getWeatherIconsUrl().asLiveData()
     private var getCitiesFromFirestore = firestoreRepository.getCitiesFromFirestore()
     private var getOpenWeatherResponseFromApi = openWeatherMapRepository.getOpenWeatherResponse()
     private var getOpenWeatherResponseFromFirestore =
@@ -39,6 +41,19 @@ class CitiesViewModel @Inject constructor(
                 firestoreRepository.callCitiesFromFirestore()
                 combine(
                     citiesListFromRoom,
+                    getWeatherIconsUrl.value,
+                    getCitiesFromFirestore.value,
+                    getOpenWeatherResponseFromApi.value,
+                    firestoreRepository.openWeatherResponseListFromFirestore
+                )
+            }
+        }
+
+        mediatorLiveData.addSource(getWeatherIconsUrl) { weatherIconsUrl ->
+            if (!weatherIconsUrl.isNullOrEmpty()) {
+                combine(
+                    getCitiesFromRoom.value,
+                    weatherIconsUrl,
                     getCitiesFromFirestore.value,
                     getOpenWeatherResponseFromApi.value,
                     firestoreRepository.openWeatherResponseListFromFirestore
@@ -50,6 +65,7 @@ class CitiesViewModel @Inject constructor(
             if (!citiesListFromFirestore.isNullOrEmpty()) {
                 combine(
                     getCitiesFromRoom.value,
+                    getWeatherIconsUrl.value,
                     citiesListFromFirestore,
                     getOpenWeatherResponseFromApi.value,
                     firestoreRepository.openWeatherResponseListFromFirestore
@@ -84,6 +100,7 @@ class CitiesViewModel @Inject constructor(
                 )
                 combine(
                     getCitiesFromRoom.value,
+                    getWeatherIconsUrl.value,
                     getCitiesFromFirestore.value,
                     openWeatherResponseFromApi,
                     firestoreRepository.openWeatherResponseListFromFirestore
@@ -100,6 +117,7 @@ class CitiesViewModel @Inject constructor(
                 )
                 combine(
                     getCitiesFromRoom.value,
+                    getWeatherIconsUrl.value,
                     getCitiesFromFirestore.value,
                     getOpenWeatherResponseFromApi.value,
                     firestoreRepository.openWeatherResponseListFromFirestore
@@ -111,14 +129,15 @@ class CitiesViewModel @Inject constructor(
 
     private fun combine(
         citiesListFromRoom: List<City>?,
+        weatherIconsUrl: List<WeatherIconUrl>?,
         citiesListFromFirestore: List<City>?,
         openWeatherResponseFromApi: OpenWeatherResponse?,
         openWeatherResponseListFromFirestore: List<OpenWeatherResponse>?
     ) {
         val viewState = CitiesViewState()
         viewState.citiesList = citiesListFromRoom
-
         viewState.openWeatherResponseList = openWeatherResponseListFromFirestore
+        viewState.weatherIconsUrl = weatherIconsUrl
         mediatorLiveData.value = viewState
     }
 

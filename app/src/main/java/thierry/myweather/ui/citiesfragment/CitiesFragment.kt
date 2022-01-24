@@ -22,6 +22,7 @@ import thierry.myweather.R
 import thierry.myweather.databinding.FragmentCitiesBinding
 import thierry.myweather.model.City
 import thierry.myweather.model.OpenWeatherResponse
+import thierry.myweather.model.WeatherIconUrl
 import thierry.myweather.ui.cityDetailFragment.CityDetailFragment
 import thierry.myweather.utils.Utils
 import java.util.*
@@ -51,13 +52,15 @@ class CitiesFragment : Fragment() {
                     setUpRecyclerView(
                         recyclerView!!,
                         citiesViewState.citiesList!!.sortedBy { city -> city.position },
-                        citiesViewState.openWeatherResponseList
+                        citiesViewState.openWeatherResponseList,
+                        citiesViewState.weatherIconsUrl
                     )
                 } else {
                     setUpRecyclerView(
                         recyclerView!!,
                         citiesViewState.citiesList!!.sortedBy { city -> city.position },
-                        null
+                        null,
+                        citiesViewState.weatherIconsUrl
                     )
                 }
 
@@ -270,12 +273,13 @@ class CitiesFragment : Fragment() {
     private fun setUpRecyclerView(
         recyclerView: RecyclerView,
         citiesList: List<City>,
-        openWeatherResponseList: List<OpenWeatherResponse>?
+        openWeatherResponseList: List<OpenWeatherResponse>?,
+        weatherIconsUrl: List<WeatherIconUrl>?
     ) {
         val myLayoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = myLayoutManager
-        recyclerView.adapter = CitiesAdapter(citiesList, openWeatherResponseList)
+        recyclerView.adapter = CitiesAdapter(citiesList, openWeatherResponseList, weatherIconsUrl)
     }
 
     fun refreshFragment() {
