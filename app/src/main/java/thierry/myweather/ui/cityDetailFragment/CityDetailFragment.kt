@@ -47,6 +47,9 @@ class CityDetailFragment : Fragment() {
                         binding.cityName.text = openWeatherResponseFromFirestore.name
                         binding.weatherImageviewDescription.text =
                             openWeatherResponseFromFirestore.weather?.get(0)?.description
+                        val cityTemp =
+                            "${openWeatherResponseFromFirestore.main?.temp.toString()} °"
+                        binding.cityTemp.text = cityTemp
                         Glide.with(rootView)
                             .load(
                                 "http://openweathermap.org/img/wn/${
@@ -76,6 +79,9 @@ class CityDetailFragment : Fragment() {
                 binding.cityName.text = cityDetailViewState.openWeatherResponseFromFirestore!!.name
                 binding.weatherImageviewDescription.text =
                     cityDetailViewState.openWeatherResponseFromFirestore!!.weather?.get(0)?.description
+                val cityTemp =
+                    "${cityDetailViewState.openWeatherResponseFromFirestore!!.main?.temp.toString()} °"
+                binding.cityTemp.text = cityTemp
             }
 
             if (cityDetailViewState.weatherIconsUrl != null) {
