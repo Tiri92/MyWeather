@@ -22,8 +22,6 @@ private const val ARG_PARAM_CITY_COUNTRY = "city country"
 class CityDetailFragment : Fragment() {
 
     private val viewModel: CityDetailViewModel by viewModels()
-    private var cityName: String? = null
-    private var cityCountry: String? = null
     private var isFailure: Boolean? = null
 
     override fun onCreateView(
@@ -38,14 +36,14 @@ class CityDetailFragment : Fragment() {
         bottomNav.isVisible = false
 
         arguments.let {
-            cityName = it?.getString(ARG_PARAM_CITY_NAME)
-            cityCountry = it?.getString(ARG_PARAM_CITY_COUNTRY)
+            viewModel.cityName = it?.getString(ARG_PARAM_CITY_NAME)
+            viewModel.cityCountry = it?.getString(ARG_PARAM_CITY_COUNTRY)
         }
 
         if (!viewModel.getOpenWeatherResponseListFromFirestore().isNullOrEmpty()) {
             viewModel.getOpenWeatherResponseListFromFirestore()
                 .forEach { openWeatherResponseFromFirestore ->
-                    if (cityName == openWeatherResponseFromFirestore.name && cityCountry == openWeatherResponseFromFirestore.sys?.country) {
+                    if (viewModel.cityName == openWeatherResponseFromFirestore.name && viewModel.cityCountry == openWeatherResponseFromFirestore.sys?.country) {
                         binding.cityName.text = openWeatherResponseFromFirestore.name
                         binding.weatherImageviewDescription.text =
                             openWeatherResponseFromFirestore.weather?.get(0)?.description
@@ -73,34 +71,23 @@ class CityDetailFragment : Fragment() {
             ).show()
         }
 
-        viewModel.getOpenWeatherResponseFromFirestore()
-            .observe(viewLifecycleOwner) { openWeatherResponseFromFirestore ->
-                if (openWeatherResponseFromFirestore != null && openWeatherResponseFromFirestore.name == cityName && openWeatherResponseFromFirestore.sys?.country == cityCountry) {
-                    binding.cityName.text = openWeatherResponseFromFirestore.name
-                    binding.weatherImageviewDescription.text =
-                        openWeatherResponseFromFirestore.weather?.get(0)?.description
-                    Glide.with(rootView)
-                        .load(
-                            "http://openweathermap.org/img/wn/${
-                                openWeatherResponseFromFirestore.weather?.get(
-                                    0
-                                )?.icon
-                            }@2x.png"
-                        )
-                        .centerCrop().into(binding.weatherImageview)
-                    Log.i(
-                        "THIERRYBITAR",
-                        "${openWeatherResponseFromFirestore.main?.temp} à ${openWeatherResponseFromFirestore.name}"
-                    )
-                }
+        viewModel.getViewState().observe(viewLifecycleOwner) { cityDetailViewState ->
+            if (cityDetailViewState.openWeatherResponseFromFirestore != null) {
+                binding.cityName.text = cityDetailViewState.openWeatherResponseFromFirestore!!.name
+                binding.weatherImageviewDescription.text =
+                    cityDetailViewState.openWeatherResponseFromFirestore!!.weather?.get(0)?.description
             }
 
-        viewModel.getOpenWeatherResponse().observe(viewLifecycleOwner) { openWeatherResponse ->
-            if (openWeatherResponse != null) {
-                viewModel.updateInfoCityWeatherInFirestore(
-                    openWeatherResponse,
-                    "${openWeatherResponse.name}-${openWeatherResponse.sys?.country}"
-                )
+            if (cityDetailViewState.weatherIconsUrl != null) {
+                cityDetailViewState.weatherIconsUrl!!.forEach { weatherIconUrl ->
+                    if (weatherIconUrl.name == cityDetailViewState.openWeatherResponseFromFirestore?.weather?.get(
+                            0
+                        )?.icon
+                    ) {
+                        Glide.with(rootView).load(weatherIconUrl.firestoreStorageUrl).centerCrop()
+                            .into(binding.weatherImageview)
+                    }
+                }
             }
         }
 
@@ -131,7 +118,7 @@ class CityDetailFragment : Fragment() {
         }
 
         binding.swipeRefresh.setOnRefreshListener {
-            viewModel.callOpenWeatherMap(cityName!!, cityCountry!!)
+            viewModel.callOpenWeatherMap(viewModel.cityName!!, viewModel.cityCountry!!)
             binding.swipeRefresh.isRefreshing = false
         }
 
