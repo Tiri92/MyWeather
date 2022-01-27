@@ -2,6 +2,7 @@ package thierry.myweather.ui.citiesfragment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import thierry.myweather.databinding.ItemCityBinding
@@ -26,24 +27,23 @@ class CitiesAdapter(
         holder.cityCountry.text = cities[position].countryCode
         holder.cityName.tag = cities[position].id
 
-        if (openWeatherResponseList != null) {
-            holder.cityTemperature.text = openWeatherResponseList.size.toString()
-            openWeatherResponseList.forEach { response ->
-                if (holder.cityName.text.toString() == response.name.toString() && holder.cityCountry.text.toString() == response.sys?.country) {
-                    holder.cityTemperature.text = response.main?.temp.toString()
-                    weatherIconsUrl?.forEach { weatherIconUrl ->
-                        if (weatherIconUrl.name == response.weather?.get(
-                                0
-                            )?.icon
-                        ) {
-                            Glide.with(holder.itemView)
-                                .load(
-                                    weatherIconUrl.firestoreStorageUrl
-                                )
-                                .centerCrop().into(holder.cityImage)
-                        }
+        openWeatherResponseList?.forEach { response ->
+            if (holder.cityName.text.toString() == response.name.toString() && holder.cityCountry.text.toString() == response.sys?.country) {
+                holder.progressCircularTemp.isVisible = false
+                val cityTemp = "${response.main?.temp.toString()} °"
+                holder.cityTemperature.text = cityTemp
+                weatherIconsUrl?.forEach { weatherIconUrl ->
+                    if (weatherIconUrl.name == response.weather?.get(
+                            0
+                        )?.icon
+                    ) {
+                        holder.progressCircularImage.isVisible = false
+                        Glide.with(holder.itemView)
+                            .load(
+                                weatherIconUrl.firestoreStorageUrl
+                            )
+                            .centerCrop().into(holder.cityImage)
                     }
-
                 }
             }
         }
@@ -59,6 +59,8 @@ class CitiesAdapter(
         val cityImage = binding.cityImage
         val cityTemperature = binding.cityTemp
         val cityCountry = binding.cityCountry
+        val progressCircularTemp = binding.progressCircularTemp
+        val progressCircularImage = binding.progressCircularImage
     }
 
 }
