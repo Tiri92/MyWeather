@@ -26,16 +26,21 @@ class CityDetailViewModel @Inject constructor(
     private var getOpenWeatherResponseFromApi = openWeatherMapRepository.getOpenWeatherResponse()
     private var getOpenWeatherResponseFromFirestore =
         firestoreRepository.getOpenWeatherResponseFromFirestore()
+    private var getIsFailure = openWeatherMapRepository.getIsFailure()
+    private var getCurrentConnectionState = viewModelRepository.getCurrentConnectionState()
     private val mediatorLiveData: MediatorLiveData<CityDetailViewState> =
         MediatorLiveData<CityDetailViewState>()
     var cityName: String? = null
     var cityCountry: String? = null
+    var found: OpenWeatherResponse? = null
 
     init {
 
+        openWeatherMapRepository.setIsFailureToFalse()
+
         mediatorLiveData.addSource(getWeatherIconsUrl) { weatherIconsUrl ->
             if (weatherIconsUrl != null) {
-                combine(weatherIconsUrl, null)
+                combine(weatherIconsUrl, null, getIsFailure.value, getCurrentConnectionState.value)
             }
         }
 
@@ -51,19 +56,46 @@ class CityDetailViewModel @Inject constructor(
         mediatorLiveData.addSource(getOpenWeatherResponseFromFirestore) { openWeatherResponseFromFirestore ->
             if (openWeatherResponseFromFirestore != null && openWeatherResponseFromFirestore.name == cityName && openWeatherResponseFromFirestore.sys?.country == cityCountry) {
 
-                combine(getWeatherIconsUrl.value, openWeatherResponseFromFirestore)
+                combine(
+                    getWeatherIconsUrl.value,
+                    openWeatherResponseFromFirestore,
+                    getIsFailure.value,
+                    getCurrentConnectionState.value
+                )
             }
+        }
+
+        mediatorLiveData.addSource(getIsFailure) { isFailure ->
+            combine(
+                getWeatherIconsUrl.value,
+                getOpenWeatherResponseFromFirestore.value,
+                isFailure,
+                getCurrentConnectionState.value
+            )
+        }
+
+        mediatorLiveData.addSource(getCurrentConnectionState) { isConnected ->
+            combine(
+                getWeatherIconsUrl.value,
+                getOpenWeatherResponseFromFirestore.value,
+                getIsFailure.value,
+                isConnected
+            )
         }
 
     }
 
     private fun combine(
         weatherIconsUrl: List<WeatherIconUrl>?,
-        openWeatherResponseFromFirestore: OpenWeatherResponse?
+        openWeatherResponseFromFirestore: OpenWeatherResponse?,
+        isFailure: Boolean?,
+        isConnected: Boolean?
     ) {
         val viewState = CityDetailViewState()
         viewState.weatherIconsUrl = weatherIconsUrl
         viewState.openWeatherResponseFromFirestore = openWeatherResponseFromFirestore
+        viewState.isFailure = isFailure
+        viewState.isConnected = isConnected
         mediatorLiveData.value = viewState
     }
 
@@ -74,12 +106,6 @@ class CityDetailViewModel @Inject constructor(
     fun callOpenWeatherMap(cityName: String, countryName: String) {
         openWeatherMapRepository.callOpenWeatherMapApi(cityName, countryName)
     }
-
-    fun getIsFailure(): LiveData<Boolean> {
-        return openWeatherMapRepository.getIsFailure()
-    }
-
-    fun getCurrentConnectionState() = viewModelRepository.getCurrentConnectionState()
 
     fun getOpenWeatherResponseListFromFirestore(): MutableList<OpenWeatherResponse> {
         return firestoreRepository.openWeatherResponseListFromFirestore

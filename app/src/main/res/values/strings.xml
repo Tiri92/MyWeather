@@ -19,4 +19,6 @@
     <string name="valid_internet_connection">Valid internet connection</string>
     <string name="weather_info_updated">Weather information updated</string>
     <string name="city_already_exist">This city already exist in your list</string>
+    <string name="no_city_found">No city found, please change city name or country code</string>
+    <string name="no_internet">No Internet Connection Available</string>
 </resources>

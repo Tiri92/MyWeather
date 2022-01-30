@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
@@ -14,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import thierry.myweather.R
 import thierry.myweather.databinding.FragmentCityDetailBinding
+import thierry.myweather.utils.Utils
 
 private const val ARG_PARAM_CITY_NAME = "city name"
 private const val ARG_PARAM_CITY_COUNTRY = "city country"
@@ -41,6 +42,8 @@ class CityDetailFragment : Fragment() {
         }
 
         if (!viewModel.getOpenWeatherResponseListFromFirestore().isNullOrEmpty()) {
+            viewModel.found = viewModel.getOpenWeatherResponseListFromFirestore()
+                .find { predicate -> predicate.name == viewModel.cityName && predicate.sys?.country == viewModel.cityCountry }
             viewModel.getOpenWeatherResponseListFromFirestore()
                 .forEach { openWeatherResponseFromFirestore ->
                     if (viewModel.cityName == openWeatherResponseFromFirestore.name && viewModel.cityCountry == openWeatherResponseFromFirestore.sys?.country) {
@@ -66,61 +69,53 @@ class CityDetailFragment : Fragment() {
 
                     }
                 }
-        } else {
-            Toast.makeText(
-                requireContext(),
-                "No weather info available, active internet please ?",
-                Toast.LENGTH_SHORT
-            ).show()
         }
 
         viewModel.getViewState().observe(viewLifecycleOwner) { cityDetailViewState ->
             if (cityDetailViewState.openWeatherResponseFromFirestore != null) {
-                binding.cityName.text = cityDetailViewState.openWeatherResponseFromFirestore!!.name
-                binding.weatherImageviewDescription.text =
-                    cityDetailViewState.openWeatherResponseFromFirestore!!.weather?.get(0)?.description
-                val cityTemp =
-                    "${cityDetailViewState.openWeatherResponseFromFirestore!!.main?.temp.toString()} °"
-                binding.cityTemp.text = cityTemp
+                if (cityDetailViewState.openWeatherResponseFromFirestore!!.name == viewModel.cityName && cityDetailViewState.openWeatherResponseFromFirestore!!.sys?.country == viewModel.cityCountry) {
+                    binding.cityName.text =
+                        cityDetailViewState.openWeatherResponseFromFirestore!!.name
+                    binding.weatherImageviewDescription.text =
+                        cityDetailViewState.openWeatherResponseFromFirestore!!.weather?.get(0)?.description
+                    val cityTemp =
+                        "${cityDetailViewState.openWeatherResponseFromFirestore!!.main?.temp.toString()} °"
+                    binding.cityTemp.text = cityTemp
+                }
             }
 
-            if (cityDetailViewState.weatherIconsUrl != null) {
-                cityDetailViewState.weatherIconsUrl!!.forEach { weatherIconUrl ->
-                    if (weatherIconUrl.name == cityDetailViewState.openWeatherResponseFromFirestore?.weather?.get(
-                            0
-                        )?.icon
-                    ) {
-                        Glide.with(rootView).load(weatherIconUrl.firestoreStorageUrl).centerCrop()
-                            .into(binding.weatherImageview)
+            if (cityDetailViewState.weatherIconsUrl != null && cityDetailViewState.openWeatherResponseFromFirestore != null) {
+                if (cityDetailViewState.openWeatherResponseFromFirestore!!.name == viewModel.cityName && cityDetailViewState.openWeatherResponseFromFirestore!!.sys?.country == viewModel.cityCountry) {
+                    cityDetailViewState.weatherIconsUrl!!.forEach { weatherIconUrl ->
+                        if (weatherIconUrl.name == cityDetailViewState.openWeatherResponseFromFirestore?.weather?.get(
+                                0
+                            )?.icon
+                        ) {
+                            Glide.with(rootView).load(weatherIconUrl.firestoreStorageUrl)
+                                .centerCrop()
+                                .into(binding.weatherImageview)
+                        }
                     }
                 }
             }
-        }
 
-        viewModel.getIsFailure().observe(viewLifecycleOwner) { isFailure ->
-            if (!isFailure) {
-                this.isFailure = isFailure
+            if (viewModel.found != null) {
                 binding.progressIndicator.hide()
-                binding.weatherImageview.isVisible = true
+                binding.errorMessage.isVisible = false
             } else {
-                this.isFailure = isFailure
-                binding.progressIndicator.show()
-                binding.cityName.text = ""
-                binding.weatherImageviewDescription.text = ""
-                binding.weatherImageview.isVisible = false
+                binding.errorMessage.isVisible = true
+                binding.errorMessage.text = getString(R.string.no_city_found)
             }
-        }
 
-        viewModel.getCurrentConnectionState().observe(viewLifecycleOwner) { isConnected ->
-            if (isConnected && isFailure == true) {
-                Toast.makeText(requireContext(), "Internet working again", Toast.LENGTH_LONG).show()
-            } else if (isConnected) {
-                binding.progressIndicator.hide()
-                Toast.makeText(requireContext(), "Internet working", Toast.LENGTH_LONG).show()
-            } else {
+            if (cityDetailViewState.isFailure == true && cityDetailViewState.isConnected == false || cityDetailViewState.isConnected == null) {
                 binding.progressIndicator.show()
-                Toast.makeText(requireContext(), "No internet", Toast.LENGTH_LONG).show()
+                Utils.displayCustomSnackbar(
+                    requireView(),
+                    getString(R.string.no_internet),
+                    ContextCompat.getColor(requireContext(), R.color.red)
+                )
             }
+
         }
 
         binding.swipeRefresh.setOnRefreshListener {
