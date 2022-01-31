@@ -9,6 +9,7 @@ import thierry.myweather.model.OpenWeatherResponse
 import thierry.myweather.model.WeatherIconUrl
 import thierry.myweather.repositories.FirestoreRepository
 import thierry.myweather.repositories.OpenWeatherMapRepository
+import thierry.myweather.repositories.ViewModelRepository
 import thierry.myweather.repositories.WeatherDatabaseRepository
 import javax.inject.Inject
 
@@ -16,6 +17,7 @@ import javax.inject.Inject
 class CitiesViewModel @Inject constructor(
     private val weatherDatabaseRepository: WeatherDatabaseRepository,
     private val openWeatherMapRepository: OpenWeatherMapRepository,
+    private val viewModelRepository: ViewModelRepository,
     private val firestoreRepository: FirestoreRepository
 ) :
     ViewModel() {
@@ -28,6 +30,7 @@ class CitiesViewModel @Inject constructor(
     private var getOpenWeatherResponseFromApi = openWeatherMapRepository.getOpenWeatherResponse()
     private var getOpenWeatherResponseFromFirestore =
         firestoreRepository.getOpenWeatherResponseFromFirestore()
+    private var getCurrentConnectionState = viewModelRepository.getCurrentConnectionState()
 
     init {
 
@@ -44,7 +47,8 @@ class CitiesViewModel @Inject constructor(
                     getWeatherIconsUrl.value,
                     getCitiesFromFirestore.value,
                     getOpenWeatherResponseFromApi.value,
-                    firestoreRepository.openWeatherResponseListFromFirestore
+                    firestoreRepository.openWeatherResponseListFromFirestore,
+                    getCurrentConnectionState.value
                 )
             }
         }
@@ -56,7 +60,8 @@ class CitiesViewModel @Inject constructor(
                     weatherIconsUrl,
                     getCitiesFromFirestore.value,
                     getOpenWeatherResponseFromApi.value,
-                    firestoreRepository.openWeatherResponseListFromFirestore
+                    firestoreRepository.openWeatherResponseListFromFirestore,
+                    getCurrentConnectionState.value
                 )
             }
         }
@@ -68,7 +73,8 @@ class CitiesViewModel @Inject constructor(
                     getWeatherIconsUrl.value,
                     citiesListFromFirestore,
                     getOpenWeatherResponseFromApi.value,
-                    firestoreRepository.openWeatherResponseListFromFirestore
+                    firestoreRepository.openWeatherResponseListFromFirestore,
+                    getCurrentConnectionState.value
                 )
             } else {
                 getCitiesFromRoom.value?.forEach { city ->
@@ -103,7 +109,8 @@ class CitiesViewModel @Inject constructor(
                     getWeatherIconsUrl.value,
                     getCitiesFromFirestore.value,
                     openWeatherResponseFromApi,
-                    firestoreRepository.openWeatherResponseListFromFirestore
+                    firestoreRepository.openWeatherResponseListFromFirestore,
+                    getCurrentConnectionState.value
                 )
             }
         }
@@ -120,9 +127,21 @@ class CitiesViewModel @Inject constructor(
                     getWeatherIconsUrl.value,
                     getCitiesFromFirestore.value,
                     getOpenWeatherResponseFromApi.value,
-                    firestoreRepository.openWeatherResponseListFromFirestore
+                    firestoreRepository.openWeatherResponseListFromFirestore,
+                    getCurrentConnectionState.value
                 )
             }
+        }
+
+        mediatorLiveData.addSource(getCurrentConnectionState) { isConnected ->
+            combine(
+                getCitiesFromRoom.value,
+                getWeatherIconsUrl.value,
+                getCitiesFromFirestore.value,
+                getOpenWeatherResponseFromApi.value,
+                firestoreRepository.openWeatherResponseListFromFirestore,
+                isConnected
+            )
         }
 
     }
@@ -132,12 +151,14 @@ class CitiesViewModel @Inject constructor(
         weatherIconsUrl: List<WeatherIconUrl>?,
         citiesListFromFirestore: List<City>?,
         openWeatherResponseFromApi: OpenWeatherResponse?,
-        openWeatherResponseListFromFirestore: List<OpenWeatherResponse>?
+        openWeatherResponseListFromFirestore: List<OpenWeatherResponse>?,
+        isConnected: Boolean?
     ) {
         val viewState = CitiesViewState()
         viewState.citiesList = citiesListFromRoom
         viewState.openWeatherResponseList = openWeatherResponseListFromFirestore
         viewState.weatherIconsUrl = weatherIconsUrl
+        viewState.isConnected = isConnected
         mediatorLiveData.value = viewState
     }
 

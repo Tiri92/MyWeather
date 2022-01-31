@@ -111,7 +111,7 @@ class CityDetailFragment : Fragment() {
                 binding.progressIndicator.show()
                 Utils.displayCustomSnackbar(
                     requireView(),
-                    getString(R.string.no_internet),
+                    getString(R.string.no_internet_connection),
                     ContextCompat.getColor(requireContext(), R.color.red)
                 )
             }

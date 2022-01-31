@@ -194,14 +194,22 @@ class CitiesFragment : Fragment() {
             }
 
             binding.swipeRefreshLayout.setOnRefreshListener {
-                citiesViewState.citiesList?.forEach { city ->
-                    viewModel.callOpenWeatherMap(city.name!!, city.countryCode!!)
+                if (citiesViewState.isConnected == true) {
+                    citiesViewState.citiesList?.forEach { city ->
+                        viewModel.callOpenWeatherMap(city.name!!, city.countryCode!!)
+                    }
+                    Utils.displayCustomSnackbar(
+                        requireView(),
+                        getString(R.string.weather_info_updated),
+                        ContextCompat.getColor(requireContext(), R.color.cyan_200)
+                    )
+                } else {
+                    Utils.displayCustomSnackbar(
+                        requireView(),
+                        getString(R.string.no_internet_connection),
+                        ContextCompat.getColor(requireContext(), R.color.red)
+                    )
                 }
-                Utils.displayCustomSnackbar(
-                    requireView(),
-                    getString(R.string.weather_info_updated),
-                    ContextCompat.getColor(requireContext(), R.color.cyan_200)
-                )
                 binding.swipeRefreshLayout.isRefreshing = false
             }
 
