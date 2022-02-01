@@ -9,6 +9,7 @@ import thierry.myweather.databinding.ItemCityBinding
 import thierry.myweather.model.City
 import thierry.myweather.model.OpenWeatherResponse
 import thierry.myweather.model.WeatherIconUrl
+import thierry.myweather.utils.Utils
 
 class CitiesAdapter(
     val cities: List<City>,
@@ -32,6 +33,11 @@ class CitiesAdapter(
                 holder.progressCircularTemp.isVisible = false
                 val cityTemp = "${response.main?.temp.toString()} °"
                 holder.cityTemperature.text = cityTemp
+                if (response.dt != null) {
+                    val refreshmentTimeCityWeather =
+                        Utils.epochMilliToHumanDate(response.dt.toLong())
+                    holder.refreshmentTimeCityWeather.text = refreshmentTimeCityWeather
+                }
                 weatherIconsUrl?.forEach { weatherIconUrl ->
                     if (weatherIconUrl.name == response.weather?.get(
                             0
@@ -61,6 +67,7 @@ class CitiesAdapter(
         val cityCountry = binding.cityCountry
         val progressCircularTemp = binding.progressCircularTemp
         val progressCircularImage = binding.progressCircularImage
+        val refreshmentTimeCityWeather = binding.refreshmentTimeCityWeather
     }
 
 }
