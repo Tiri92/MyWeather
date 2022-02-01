@@ -28,7 +28,7 @@ import thierry.myweather.utils.Utils
 import java.util.*
 
 @AndroidEntryPoint
-class CitiesFragment : Fragment() {
+class CitiesFragment : CitiesAdapter.CityClicked, Fragment() {
 
     private val viewModel: CitiesViewModel by viewModels()
     private var recyclerView: RecyclerView? = null
@@ -287,7 +287,8 @@ class CitiesFragment : Fragment() {
         val myLayoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = myLayoutManager
-        recyclerView.adapter = CitiesAdapter(citiesList, openWeatherResponseList, weatherIconsUrl)
+        recyclerView.adapter =
+            CitiesAdapter(citiesList, openWeatherResponseList, weatherIconsUrl, this)
     }
 
     fun refreshFragment() {
@@ -295,6 +296,55 @@ class CitiesFragment : Fragment() {
             .commit()
         parentFragmentManager.beginTransaction().attach(this@CitiesFragment)
             .commit()
+    }
+
+    override fun onCityClicked(cityId: Any) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setView(R.layout.dialog_edit_city)
+            .setPositiveButton(resources.getString(R.string.edit)) { dialog, _ ->
+                val cityNameTyped =
+                    (dialog as androidx.appcompat.app.AlertDialog).findViewById<TextInputEditText>(
+                        R.id.edittext_edit_city
+                    )?.text.toString()
+                val countryCodeTyped =
+                    (dialog).findViewById<TextInputEditText>(
+                        R.id.edittext_edit_country
+                    )?.text.toString()
+                if (cityNameTyped.trim().isEmpty() || countryCodeTyped.trim().isEmpty()) {
+                    Utils.displayCustomSnackbar(
+                        requireView(),
+                        getString(R.string.field_cant_be_empty),
+                        ContextCompat.getColor(requireContext(), R.color.red)
+                    )
+                } else {
+                    val cityFound =
+                        viewModel.getViewState().value?.citiesList?.find { city -> city.name == cityNameTyped && city.countryCode == countryCodeTyped }
+                    if (cityFound == null) {
+                        viewModel.updateCity(
+                            City(
+                                id = cityId.toString().toInt(),
+                                name = cityNameTyped,
+                                countryCode = countryCodeTyped
+                            )
+                        )
+                        if (viewModel.getViewState().value?.isConnected == true) {
+                            viewModel.callOpenWeatherMap(cityNameTyped, countryCodeTyped)
+                        }
+                    } else {
+                        Utils.displayCustomSnackbar(
+                            requireView(),
+                            getString(R.string.city_already_exist),
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.red
+                            )
+                        )
+                    }
+                }
+            }
+            .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
+            }
+            .show()
     }
 
     companion object {

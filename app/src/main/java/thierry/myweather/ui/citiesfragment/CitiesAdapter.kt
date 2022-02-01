@@ -14,9 +14,15 @@ import thierry.myweather.utils.Utils
 class CitiesAdapter(
     val cities: List<City>,
     private val openWeatherResponseList: List<OpenWeatherResponse>?,
-    private val weatherIconsUrl: List<WeatherIconUrl>?
+    private val weatherIconsUrl: List<WeatherIconUrl>?,
+    callback: CityClicked
 ) :
     RecyclerView.Adapter<CitiesAdapter.ViewHolder>() {
+    private var callback: CityClicked? = callback
+
+    interface CityClicked {
+        fun onCityClicked(cityId: Any)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemCityBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -52,6 +58,12 @@ class CitiesAdapter(
                     }
                 }
             }
+        }
+
+        holder.itemView.setOnClickListener {
+            callback?.onCityClicked(
+                holder.cityName.tag
+            )
         }
 
     }

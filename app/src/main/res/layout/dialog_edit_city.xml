@@ -8,7 +8,7 @@
         android:id="@+id/dialog_title"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="@string/add_new_city"
+        android:text="@string/edit_the_city"
         android:textColor="@color/cyan_200"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layout_add_city"
+        android:id="@+id/layout_edit_city"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -28,17 +28,17 @@
         app:layout_constraintTop_toBottomOf="@id/dialog_title">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edittext_add_city"
+            android:id="@+id/edittext_edit_city"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/name_of_the_city"
+            android:hint="@string/new_name_of_the_city"
             android:inputType="text"
             android:maxLength="20"
             android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layout_add_country"
+        android:id="@+id/layout_edit_country"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -47,13 +47,13 @@
         app:helperTextEnabled="true"
         app:helperTextTextColor="@color/red"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_add_city">
+        app:layout_constraintTop_toBottomOf="@id/layout_edit_city">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edittext_add_country"
+            android:id="@+id/edittext_edit_country"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/code_of_the_country"
+            android:hint="@string/new_code_of_the_country"
             android:inputType="text"
             android:maxLength="5"
             android:singleLine="true" />
