@@ -53,6 +53,25 @@ class CityDetailFragment : Fragment() {
                         val cityTemp =
                             "${openWeatherResponseFromFirestore.main?.temp.toString()} °"
                         binding.cityTemp.text = cityTemp
+                        val cityTempMinMax =
+                            "min: ${openWeatherResponseFromFirestore.main?.tempMin.toString()} ° \nmax: ${openWeatherResponseFromFirestore.main?.tempMax.toString()} ° \nfeels like: ${openWeatherResponseFromFirestore.main?.feelsLike.toString()} °"
+                        binding.cityTempMinMax.text = cityTempMinMax
+                        val windSpeedAndDegree =
+                            "Wind speed: ${openWeatherResponseFromFirestore.wind?.speed.toString()} km/h \nWind degree: ${openWeatherResponseFromFirestore.wind?.deg.toString()} °/360 °"
+                        binding.cityWindSpeedDegree.text = windSpeedAndDegree
+                        val cityHumidityAndPressure =
+                            "Humidity: ${openWeatherResponseFromFirestore.main?.humidity.toString()}% \nPressure: ${openWeatherResponseFromFirestore.main?.pressure.toString()} hPa"
+                        binding.cityHumidityPressure.text = cityHumidityAndPressure
+                        val cityHourSunriseAndSunset = "Sunrise: ${
+                            Utils.epochMilliToHumanDate(
+                                openWeatherResponseFromFirestore.sys?.sunrise!!.toLong()
+                            )
+                        }\nSunset: ${
+                            Utils.epochMilliToHumanDate(
+                                openWeatherResponseFromFirestore.sys.sunset!!.toLong()
+                            )
+                        }"
+                        binding.cityHourSunriseSunset.text = cityHourSunriseAndSunset
                         Glide.with(rootView)
                             .load(
                                 "http://openweathermap.org/img/wn/${
@@ -81,6 +100,25 @@ class CityDetailFragment : Fragment() {
                     val cityTemp =
                         "${cityDetailViewState.openWeatherResponseFromFirestore!!.main?.temp.toString()} °"
                     binding.cityTemp.text = cityTemp
+                    val cityTempMinMax =
+                        "min: ${cityDetailViewState.openWeatherResponseFromFirestore!!.main?.tempMin.toString()} ° \nmax: ${cityDetailViewState.openWeatherResponseFromFirestore!!.main?.tempMax.toString()} ° \nfeels like: ${cityDetailViewState.openWeatherResponseFromFirestore!!.main?.feelsLike.toString()} °"
+                    binding.cityTempMinMax.text = cityTempMinMax
+                    val windSpeedAndDegree =
+                        "Wind speed: ${cityDetailViewState.openWeatherResponseFromFirestore!!.wind?.speed.toString()} km/h \nWind degree: ${cityDetailViewState.openWeatherResponseFromFirestore!!.wind?.deg.toString()} °/360 °"
+                    binding.cityWindSpeedDegree.text = windSpeedAndDegree
+                    val cityHumidityAndPressure =
+                        "Humidity: ${cityDetailViewState.openWeatherResponseFromFirestore!!.main?.humidity.toString()}% \nPressure: ${cityDetailViewState.openWeatherResponseFromFirestore!!.main?.pressure.toString()} hPa"
+                    binding.cityHumidityPressure.text = cityHumidityAndPressure
+                    val cityHourSunriseAndSunset = "Sunrise: ${
+                        Utils.epochMilliToHumanDate(
+                            cityDetailViewState.openWeatherResponseFromFirestore!!.sys?.sunrise!!.toLong()
+                        )
+                    }\nSunset: ${
+                        Utils.epochMilliToHumanDate(
+                            cityDetailViewState.openWeatherResponseFromFirestore!!.sys?.sunset!!.toLong()
+                        )
+                    }"
+                    binding.cityHourSunriseSunset.text = cityHourSunriseAndSunset
                 }
             }
 
