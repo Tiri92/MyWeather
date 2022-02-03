@@ -36,7 +36,7 @@ class CitiesAdapter(
 
         openWeatherResponseList?.forEach { response ->
             if (holder.cityName.text.toString() == response.name.toString() && holder.cityCountry.text.toString() == response.sys?.country) {
-                holder.progressCircularTemp.isVisible = false
+                holder.progressIndicator.isVisible = false
                 val cityTemp = "${response.main?.temp.toString()} °"
                 holder.cityTemperature.text = cityTemp
                 if (response.dt != null) {
@@ -49,7 +49,6 @@ class CitiesAdapter(
                             0
                         )?.icon
                     ) {
-                        holder.progressCircularImage.isVisible = false
                         Glide.with(holder.itemView)
                             .load(
                                 weatherIconUrl.firestoreStorageUrl
@@ -77,8 +76,7 @@ class CitiesAdapter(
         val cityImage = binding.cityImage
         val cityTemperature = binding.cityTemp
         val cityCountry = binding.cityCountry
-        val progressCircularTemp = binding.progressCircularTemp
-        val progressCircularImage = binding.progressCircularImage
+        val progressIndicator = binding.progressIndicator
         val refreshmentTimeCityWeather = binding.refreshmentTimeCityWeather
     }
 

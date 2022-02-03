@@ -328,6 +328,7 @@ class CitiesFragment : CitiesAdapter.CityClicked, Fragment() {
                             )
                         )
                         if (viewModel.getViewState().value?.isConnected == true) {
+                            viewModel.clearOpenWeatherResponseListFromFirestore()
                             viewModel.callOpenWeatherMap(cityNameTyped, countryCodeTyped)
                         }
                     } else {
