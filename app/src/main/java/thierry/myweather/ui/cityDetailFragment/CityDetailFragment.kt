@@ -23,7 +23,6 @@ private const val ARG_PARAM_CITY_COUNTRY = "city country"
 class CityDetailFragment : Fragment() {
 
     private val viewModel: CityDetailViewModel by viewModels()
-    private var isFailure: Boolean? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +46,7 @@ class CityDetailFragment : Fragment() {
             viewModel.getOpenWeatherResponseListFromFirestore()
                 .forEach { openWeatherResponseFromFirestore ->
                     if (viewModel.cityName == openWeatherResponseFromFirestore.name && viewModel.cityCountry == openWeatherResponseFromFirestore.sys?.country) {
+                        binding.errorMessage.isVisible = false
                         binding.cityName.text = openWeatherResponseFromFirestore.name
                         binding.weatherImageviewDescription.text =
                             openWeatherResponseFromFirestore.weather?.get(0)?.description

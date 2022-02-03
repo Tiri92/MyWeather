@@ -20,7 +20,7 @@
     <string name="valid_internet_connection">Valid internet connection</string>
     <string name="weather_info_updated">Weather information updated</string>
     <string name="city_already_exist">This city already exist in your list</string>
-    <string name="no_city_found">No city found, please change city name or country code</string>
+    <string name="no_city_found">No city found, please enable internet and/or enter a correct city name and the correct country code that goes with it</string>
     <string name="edit_the_city">Edit the city</string>
     <string name="new_name_of_the_city">New name of the City</string>
     <string name="new_code_of_the_country">New code of the country</string>
