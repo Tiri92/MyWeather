@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import thierry.myweather.R
 import thierry.myweather.databinding.ActivityMainBinding
 import thierry.myweather.ui.citiesfragment.CitiesFragment
+import thierry.myweather.ui.playerfragment.PlayerFragment
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.page_2 -> {
-                    openFragment(SecondFragment.newInstance())
+                    openFragment(PlayerFragment.newInstance())
                     true
                 }
                 R.id.page_3 -> {
