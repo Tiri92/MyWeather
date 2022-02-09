@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/page_1"
+        android:id="@+id/weather"
         android:enabled="true"
-        android:icon="@drawable/twotone_cloud_circle_24"
+        android:icon="@drawable/ic_baseline_cloud_24"
         android:title="@string/weather" />
+
     <item
-        android:id="@+id/page_2"
+        android:id="@+id/google_map"
         android:enabled="true"
-        android:icon="@drawable/baseline_wifi_off_24"
-        android:title="@string/text_label_2" />
+        android:icon="@drawable/baseline_map_24"
+        android:title="@string/map" />
+
     <item
-        android:id="@+id/page_3"
+        android:id="@+id/player"
         android:enabled="true"
-        android:icon="@drawable/baseline_cloud_off_24"
-        android:title="@string/text_label_3" />
+        android:icon="@drawable/baseline_smart_display_24"
+        android:title="@string/player" />
 </menu>

@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import thierry.myweather.R
 import thierry.myweather.databinding.ActivityMainBinding
 import thierry.myweather.ui.citiesfragment.CitiesFragment
+import thierry.myweather.ui.googlemapsfragment.GoogleMapFragment
 import thierry.myweather.ui.playerfragment.PlayerFragment
 
 @AndroidEntryPoint
@@ -30,16 +31,16 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.page_1 -> {
+                R.id.weather -> {
                     openFragment(CitiesFragment.newInstance())
                     true
                 }
-                R.id.page_2 -> {
-                    openFragment(PlayerFragment.newInstance())
+                R.id.google_map -> {
+                    openFragment(GoogleMapFragment.newInstance())
                     true
                 }
-                R.id.page_3 -> {
-                    // Respond to navigation item 2 click
+                R.id.player -> {
+                    openFragment(PlayerFragment.newInstance())
                     true
                 }
                 else -> false
