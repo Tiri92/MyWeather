@@ -8,7 +8,7 @@ import thierry.myweather.model.OpenWeatherResponse
 
 interface OpenWeatherMapService {
 
-    @GET("weather?appid=${BuildConfig.OPENWEATHER_API_KEY}&units=metric&lang=fr")
+    @GET("weather?appid=${BuildConfig.WEATHER_API_KEY}&units=metric&lang=fr")
     fun getWeatherByCityName(
         @Query("q") cityNameAndCountryName: String
     ): Call<OpenWeatherResponse>
