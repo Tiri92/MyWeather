@@ -47,6 +47,7 @@ class CityDetailFragment : Fragment() {
                 .forEach { openWeatherResponseFromFirestore ->
                     if (viewModel.cityName == openWeatherResponseFromFirestore.name && viewModel.cityCountry == openWeatherResponseFromFirestore.sys?.country) {
                         binding.errorMessage.isVisible = false
+                        binding.errorImage.isVisible = false
                         binding.cityName.text = openWeatherResponseFromFirestore.name
                         binding.weatherImageviewDescription.text =
                             openWeatherResponseFromFirestore.weather?.get(0)?.description
@@ -140,8 +141,10 @@ class CityDetailFragment : Fragment() {
             if (viewModel.found != null) {
                 binding.progressIndicator.hide()
                 binding.errorMessage.isVisible = false
+                binding.errorImage.isVisible = false
             } else {
                 binding.errorMessage.isVisible = true
+                binding.errorImage.isVisible = true
                 binding.errorMessage.text = getString(R.string.no_city_found)
             }
 
