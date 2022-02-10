@@ -14,7 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import thierry.myweather.R
 import thierry.myweather.databinding.ActivityMainBinding
 import thierry.myweather.ui.citiesfragment.CitiesFragment
-import thierry.myweather.ui.googlemapsfragment.GoogleMapFragment
+import thierry.myweather.ui.googlemapfragment.GoogleMapFragment
 import thierry.myweather.ui.playerfragment.PlayerFragment
 
 @AndroidEntryPoint
