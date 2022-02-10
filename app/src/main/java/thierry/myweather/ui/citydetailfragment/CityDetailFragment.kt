@@ -73,6 +73,9 @@ class CityDetailFragment : Fragment() {
                             )
                         }"
                         binding.cityHourSunriseSunset.text = cityHourSunriseAndSunset
+                        val refreshmentTimeCityWeather =
+                            Utils.epochMilliToHumanDate(openWeatherResponseFromFirestore.dt?.toLong()!!)
+                        binding.refreshmentTime.text = refreshmentTimeCityWeather
                         Glide.with(rootView)
                             .load(
                                 "http://openweathermap.org/img/wn/${
@@ -120,6 +123,9 @@ class CityDetailFragment : Fragment() {
                         )
                     }"
                     binding.cityHourSunriseSunset.text = cityHourSunriseAndSunset
+                    val refreshmentTimeCityWeather =
+                        Utils.epochMilliToHumanDate(cityDetailViewState.openWeatherResponseFromFirestore!!.dt?.toLong()!!)
+                    binding.refreshmentTime.text = refreshmentTimeCityWeather
                 }
             }
 
