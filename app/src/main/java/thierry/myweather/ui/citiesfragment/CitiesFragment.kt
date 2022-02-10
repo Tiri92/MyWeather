@@ -23,7 +23,7 @@ import thierry.myweather.databinding.FragmentCitiesBinding
 import thierry.myweather.model.City
 import thierry.myweather.model.OpenWeatherResponse
 import thierry.myweather.model.WeatherIconUrl
-import thierry.myweather.ui.cityDetailFragment.CityDetailFragment
+import thierry.myweather.ui.citydetailfragment.CityDetailFragment
 import thierry.myweather.utils.Utils
 import java.util.*
 

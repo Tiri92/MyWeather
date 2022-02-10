@@ -1,4 +1,4 @@
-package thierry.myweather.ui.cityDetailFragment
+package thierry.myweather.ui.citydetailfragment
 
 import android.os.Bundle
 import android.util.Log

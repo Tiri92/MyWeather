@@ -1,4 +1,4 @@
-package thierry.myweather.ui.cityDetailFragment
+package thierry.myweather.ui.citydetailfragment
 
 import thierry.myweather.model.OpenWeatherResponse
 import thierry.myweather.model.WeatherIconUrl
