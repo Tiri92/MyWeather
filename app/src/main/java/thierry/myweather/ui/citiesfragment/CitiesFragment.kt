@@ -48,6 +48,17 @@ class CitiesFragment : CitiesAdapter.CityClicked, Fragment() {
             if (citiesViewState.citiesList != null) {
                 recyclerView = binding.recyclerviewCities
 
+                recyclerView!!.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+                        if (newState == 1 || newState == 2) {
+                            binding.addCityButton.hide()
+                        } else {
+                            binding.addCityButton.show()
+                        }
+                    }
+                })
+
                 if (!citiesViewState.openWeatherResponseList.isNullOrEmpty()) {
                     setUpRecyclerView(
                         recyclerView!!,
