@@ -69,7 +69,7 @@ class CitiesFragment : CitiesAdapter.CityClicked, Fragment() {
 
                 val simpleCallback = object :
                     ItemTouchHelper.SimpleCallback(
-                        ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                        0,
                         ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT
                     ) {
 
