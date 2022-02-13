@@ -13,6 +13,12 @@
         android:title="@string/map" />
 
     <item
+        android:id="@+id/web_view"
+        android:enabled="true"
+        android:icon="@drawable/baseline_pageview_24"
+        android:title="@string/forecast" />
+
+    <item
         android:id="@+id/player"
         android:enabled="true"
         android:icon="@drawable/baseline_smart_display_24"

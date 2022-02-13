@@ -16,6 +16,7 @@ import thierry.myweather.databinding.ActivityMainBinding
 import thierry.myweather.ui.citiesfragment.CitiesFragment
 import thierry.myweather.ui.googlemapfragment.GoogleMapFragment
 import thierry.myweather.ui.playerfragment.PlayerFragment
+import thierry.myweather.ui.webviewfragment.WebViewFragment
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -37,6 +38,10 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.google_map -> {
                     openFragment(GoogleMapFragment.newInstance())
+                    true
+                }
+                R.id.web_view -> {
+                    openFragment(WebViewFragment.newInstance())
                     true
                 }
                 R.id.player -> {

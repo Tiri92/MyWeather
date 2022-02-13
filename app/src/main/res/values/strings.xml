@@ -25,4 +25,6 @@
     <string name="new_name_of_the_city">New name of the City</string>
     <string name="new_code_of_the_country">New code of the country</string>
     <string name="code_of_the_country">Code of the country</string>
+    <string name="forecast">Forecast</string>
+    <string name="select_a_city">Select a city</string>
 </resources>
