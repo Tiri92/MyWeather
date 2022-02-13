@@ -36,12 +36,12 @@ class MainActivity : AppCompatActivity() {
                     openFragment(CitiesFragment.newInstance())
                     true
                 }
-                R.id.google_map -> {
-                    openFragment(GoogleMapFragment.newInstance())
-                    true
-                }
                 R.id.web_view -> {
                     openFragment(WebViewFragment.newInstance())
+                    true
+                }
+                R.id.google_map -> {
+                    openFragment(GoogleMapFragment.newInstance())
                     true
                 }
                 R.id.player -> {
