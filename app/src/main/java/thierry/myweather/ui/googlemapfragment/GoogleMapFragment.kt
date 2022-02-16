@@ -80,6 +80,12 @@ class GoogleMapFragment : Fragment() {
             Utils.checkGpsState(requireActivity())
             launchGeolocationRequest()
             map!!.isMyLocationEnabled = true
+        } else if (requestCode == 0 && grantResults[0] == -1) {
+            Utils.displayCustomSnackbar(
+                requireView(),
+                getString(R.string.allow_geolocation),
+                ContextCompat.getColor(requireContext(), R.color.red)
+            )
         } else {
             Utils.displayCustomSnackbar(
                 requireView(),
